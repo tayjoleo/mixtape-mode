@@ -1,0 +1,125 @@
+.mm-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mm-picker__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.mm-picker__controls .mm-field {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.mm-picker__note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.mm-picker__results,
+.mm-picker__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mm-picker__results {
+  max-height: 320px;
+  overflow-y: auto;
+  border: 2px solid var(--mm-ink);
+  border-radius: 12px;
+  padding: 8px;
+  background: var(--mm-white);
+}
+
+.mm-picker__result,
+.mm-picker__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 10px;
+}
+
+.mm-picker__row {
+  border: 2px solid var(--mm-ink);
+  background: var(--mm-white);
+}
+
+.mm-picker__number {
+  font-family: var(--mm-font-display);
+  font-size: 13px;
+  width: 18px;
+  flex: none;
+  text-align: right;
+}
+
+.mm-picker__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.mm-picker__name {
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.mm-picker__meta {
+  font-size: 13px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.mm-picker__adds,
+.mm-picker__order {
+  display: flex;
+  gap: 6px;
+  flex: none;
+}
+
+.mm-picker__adds button,
+.mm-picker__order button {
+  min-width: var(--mm-tap);
+  min-height: var(--mm-tap);
+  padding: 0 10px;
+  border: 2px solid var(--mm-ink);
+  border-radius: var(--mm-radius-pill);
+  background: var(--mm-card);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.mm-picker__adds button:disabled,
+.mm-picker__order button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mm-picker__side h3 {
+  margin: 0 0 6px;
+  font-family: var(--mm-font-display);
+  font-size: 16px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.mm-picker__count {
+  font-family: var(--mm-font-body);
+  font-weight: 500;
+  font-size: 13px;
+}

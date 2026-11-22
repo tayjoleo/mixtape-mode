@@ -1,0 +1,66 @@
+.mm-pad {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mm-pad__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mm-pad__label {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.mm-pad__clear {
+  min-height: var(--mm-tap);
+  padding: 0 14px;
+  border: var(--mm-border) solid var(--mm-ink);
+  border-radius: var(--mm-radius-pill);
+  background: var(--mm-card);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.mm-pad__clear:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.mm-pad__surface {
+  display: block;
+  width: 100%;
+  max-width: 440px;
+  aspect-ratio: 300 / 80;
+  background: var(--mm-white);
+  border: var(--mm-border) dashed var(--mm-ink);
+  border-radius: 12px;
+  /* Without this a finger drag scrolls the page instead of drawing. */
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.mm-pad__surface path {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mm-pad__hint {
+  text-anchor: middle;
+  font-family: var(--mm-font-gochi);
+  font-size: 18px;
+  fill: #6b6b6b;
+}
+
+.mm-pad__ink {
+  margin: 0;
+  font-size: 13px;
+}

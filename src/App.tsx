@@ -8,6 +8,7 @@ import { useRoute } from './lib/router';
 import { readTapeFromPayload } from './tape/encode';
 import ChewedUp from './screens/ChewedUp';
 import GoNoGo from './screens/GoNoGo';
+import Maker from './screens/Maker';
 import NotOnGuestList from './screens/NotOnGuestList';
 import NotPremium from './screens/NotPremium';
 import Offline from './screens/Offline';
@@ -59,6 +60,18 @@ export default function App() {
     }
 
     if (!online) return <Offline />;
+
+    // The maker is reachable logged out: the decoration all works without
+    // Spotify, and only the song picker needs an account.
+    if (route.name === 'make') {
+      return (
+        <Maker
+          me={auth.status === 'logged-in' ? auth.me : null}
+          onLogin={auth.login}
+          onLogout={auth.logout}
+        />
+      );
+    }
 
     switch (auth.status) {
       case 'loading':

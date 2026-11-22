@@ -200,3 +200,190 @@ export function startPlayback(args: {
     },
   });
 }
+
+/* ------------------------------------------------------- search and lists */
+
+export type SearchPage = { tracks: Track[]; total: number; nextOffset: number | null };
+
+/**
+ * Track search.
+ *
+ * Development Mode caps `limit` at 10 (default 5), so paging uses `offset`.
+ * Ten is inside the cap whichever quota mode the app is in, so this works
+ * either way.
+ */
+export const SEARCH_PAGE_SIZE = 10;
+
+export async function searchTracks(query: string, offset = 0): Promise<SearchPage> {
+  const params = new URLSearchParams({
+    q: query,
+    type: 'track',
+    limit: String(SEARCH_PAGE_SIZE),
+    offset: String(offset),
+    market: 'from_token',
+  });
+
+  const body = await api<{ tracks?: { items?: (Track | null)[]; total?: number } }>(
+    '/search?' + params.toString(),
+  );
+
+  const items = (body.tracks?.items ?? []).filter((item): item is Track => item !== null);
+  const total = body.tracks?.total ?? items.length;
+  const next = offset + SEARCH_PAGE_SIZE;
+
+  return { tracks: items, total, nextOffset: next < total ? next : null };
+}
+
+export type Playlist = {
+  id: string;
+  name: string;
+  owner: { id: string; display_name: string | null };
+  collaborative: boolean;
+  images: { url: string }[];
+  trackCount: number;
+};
+
+/** The user's own playlists. `GET /users/{id}/playlists` is gone; this is it. */
+export async function getMyPlaylists(limit = 50): Promise<Playlist[]> {
+  const body = await api<{ items?: unknown[] }>('/me/playlists?limit=' + String(limit));
+
+  return (body.items ?? [])
+    .map((raw): Playlist | null => {
+      if (typeof raw !== 'object' || raw === null) return null;
+      const item = raw as Record<string, unknown>;
+      if (typeof item.id !== 'string' || typeof item.name !== 'string') return null;
+
+      // The track count sits under `tracks.total`, or `items.total` after the
+      // February 2026 rename.
+      const counter = (item.tracks ?? item.items) as { total?: number } | undefined;
+      const owner = (item.owner ?? {}) as { id?: string; display_name?: string | null };
+
+      return {
+        id: item.id,
+        name: item.name,
+        owner: { id: owner.id ?? '', display_name: owner.display_name ?? null },
+        collaborative: item.collaborative === true,
+        images: Array.isArray(item.images) ? (item.images as { url: string }[]) : [],
+        trackCount: counter?.total ?? 0,
+      };
+    })
+    .filter((playlist): playlist is Playlist => playlist !== null);
+}
+
+/** Accepts both the pre- and post-February-2026 response shapes. */
+export function readPlaylistItems(body: unknown): Track[] {
+  if (typeof body !== 'object' || body === null) return [];
+  const root = body as Record<string, unknown>;
+
+  // The items endpoint returns the page directly; a whole playlist object
+  // nests it under `items` or, before the rename, `tracks`.
+  const page = (Array.isArray(root.items) ? root : (root.items ?? root.tracks)) as
+    Record<string, unknown> | undefined;
+
+  const rows = Array.isArray(page?.items) ? page.items : [];
+
+  return rows
+    .map((row): Track | null => {
+      if (typeof row !== 'object' || row === null) return null;
+      const entry = row as Record<string, unknown>;
+      const track = (entry.item ?? entry.track) as Track | null | undefined;
+
+      // Local files and podcast episodes have no usable track id.
+      if (!track || typeof track.id !== 'string' || typeof track.name !== 'string') return null;
+      if ((track as { type?: string }).type === 'episode') return null;
+
+      return track;
+    })
+    .filter((track): track is Track => track !== null);
+}
+
+/**
+ * The tracks in one playlist.
+ *
+ * February 2026 renamed this endpoint from `/tracks` to `/items` for
+ * Development Mode apps, and renamed the nested `track` field to `item`.
+ * Which one is live depends on the app's quota mode, which the API will not
+ * tell us, so this tries the new name, falls back to the old one, and accepts
+ * either response shape.
+ *
+ * Either way, contents only come back for playlists the user owns or
+ * collaborates on.
+ */
+export async function getPlaylistTracks(playlistId: string): Promise<Track[]> {
+  const id = encodeURIComponent(playlistId);
+  const query = '?limit=50&market=from_token';
+
+  let body: unknown;
+  try {
+    body = await api<unknown>('/playlists/' + id + '/items' + query);
+  } catch (error) {
+    const status = error instanceof SpotifyApiError ? error.status : 0;
+    if (status === 404 || status === 400) {
+      logDebug('api', 'Playlist /items was refused, trying /tracks instead');
+      body = await api<unknown>('/playlists/' + id + '/tracks' + query);
+    } else {
+      throw error;
+    }
+  }
+
+  return readPlaylistItems(body);
+}
+
+export function trackUri(id: string): string {
+  return 'spotify:track:' + id;
+}
+
+/* ------------------------------------------------------------------ probe */
+
+export type ProbeResult = { name: string; status: number; note: string };
+
+/**
+ * Pokes the endpoints whose behaviour depends on the app's quota mode, so we
+ * can stop guessing which mode we are in. Read-only, and every call here is
+ * one the app already makes or already has a fallback for.
+ */
+export async function probeApiMode(): Promise<ProbeResult[]> {
+  const results: ProbeResult[] = [];
+
+  async function probe(name: string, path: string, describe: (body: unknown) => string) {
+    try {
+      results.push({ name, status: 200, note: describe(await api<unknown>(path)) });
+    } catch (error) {
+      const status = error instanceof SpotifyApiError ? error.status : 0;
+      results.push({
+        name,
+        status,
+        note: status === 0 ? 'the request failed' : 'refused with ' + status,
+      });
+    }
+  }
+
+  await probe(
+    'Batch GET /tracks',
+    '/tracks?ids=2PpruBYCo4H7WOBJ7Q2EwM,0eGsygTp906u18L0Oimnem',
+    (body) => {
+      const list = (body as { tracks?: unknown[] }).tracks;
+      return Array.isArray(list)
+        ? 'returned ' + list.length + ', so batch fetching is available'
+        : 'returned an unexpected shape';
+    },
+  );
+
+  await probe('Search with limit=50', '/search?q=love&type=track&limit=50', (body) => {
+    const count = (body as { tracks?: { items?: unknown[] } }).tracks?.items?.length ?? 0;
+    return count > 10
+      ? 'returned ' + count + ', so there is no Development Mode cap'
+      : 'returned ' + count + ', so the limit is capped at 10';
+  });
+
+  await probe('Profile fields on /me', '/me', (body) => {
+    const me = body as Record<string, unknown>;
+    const present = ['product', 'email', 'country', 'followers'].filter((key) => key in me);
+    return present.length > 0
+      ? 'still returns ' + present.join(', ')
+      : 'returns the reduced Development Mode field set';
+  });
+
+  logDebug('api', 'API mode probe finished', results);
+  return results;
+}

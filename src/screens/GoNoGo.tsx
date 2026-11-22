@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import AppShell from '../components/AppShell';
 import { usePlayer } from '../hooks/usePlayer';
 import { logDebug } from '../lib/debug';
-import type { Device, Me } from '../lib/spotify';
+import { probeApiMode, type Device, type Me, type ProbeResult } from '../lib/spotify';
 import { parseTrackId, trackUri } from '../lib/trackId';
 import { TEST_TAPE_HASH } from '../tape/testTape';
 import { currentRedirectUri } from '../lib/urls';
@@ -30,6 +30,8 @@ export default function GoNoGo({ me, onLogout }: { me: Me; onLogout: () => void 
   const player = usePlayer(true);
   const [trackInput, setTrackInput] = useState(TEST_TRACK_ID);
   const [devices, setDevices] = useState<Device[] | null>(null);
+  const [probe, setProbe] = useState<ProbeResult[] | null>(null);
+  const [probing, setProbing] = useState(false);
 
   const trackId = parseTrackId(trackInput);
   const playing = player.state !== null && !player.state.paused;
@@ -210,6 +212,52 @@ export default function GoNoGo({ me, onLogout }: { me: Me; onLogout: () => void 
             {player.state.shuffle ? 'ON, which is wrong' : 'off'}, repeat mode{' '}
             {player.state.repeat_mode}.
           </p>
+        ) : null}
+      </section>
+
+      <section className="mm-card mm-card--wide" aria-labelledby="mm-gonogo-mode">
+        <div className="mm-card__head">
+          <span className="mm-step">?</span>
+          <h2 id="mm-gonogo-mode">Which quota mode is this app in</h2>
+        </div>
+        <p className="mm-note">
+          Development Mode caps search at ten results, removes batch track fetching, and renames the
+          playlist endpoint. The dashboard is the real answer, but the API can be asked directly.
+          Read-only.
+        </p>
+        <div className="mm-btn-row">
+          <button
+            type="button"
+            className="mm-btn"
+            disabled={probing}
+            onClick={() => {
+              setProbing(true);
+              void probeApiMode()
+                .then(setProbe)
+                .finally(() => setProbing(false));
+            }}
+          >
+            {probing ? 'Asking Spotify...' : 'Check the API'}
+          </button>
+        </div>
+        {probe ? (
+          <dl className="mm-facts">
+            {probe.map((result) => (
+              <Fragment key={result.name}>
+                <dt>{result.name}</dt>
+                <dd>
+                  <span
+                    className={
+                      result.status === 200 ? 'mm-flag mm-flag--ok' : 'mm-flag mm-flag--missing'
+                    }
+                  >
+                    {result.status === 200 ? 'ok' : String(result.status)}
+                  </span>{' '}
+                  {result.note}
+                </dd>
+              </Fragment>
+            ))}
+          </dl>
         ) : null}
       </section>
 

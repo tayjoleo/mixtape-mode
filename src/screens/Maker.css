@@ -1,0 +1,234 @@
+.mm-maker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.mm-maker__preview {
+  flex: 1 1 520px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 20px;
+}
+
+.mm-maker__stage {
+  background-color: var(--mm-blue);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.55) 2px, transparent 2.3px);
+  background-size: 12px 12px;
+  border: var(--mm-border-thick) solid var(--mm-ink);
+  border-radius: var(--mm-radius-card);
+  box-shadow: var(--mm-shadow-card-lg);
+  padding: 32px 24px;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.mm-maker__cards {
+  flex: 1 1 420px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.mm-maker__cover {
+  display: flex;
+  justify-content: center;
+}
+
+.mm-maker__make {
+  width: 100%;
+}
+
+.mm-maker__centred {
+  text-align: center;
+}
+
+.mm-maker__link {
+  background: var(--mm-lime);
+  border: var(--mm-border-thick) solid var(--mm-ink);
+  border-radius: var(--mm-radius-card);
+  box-shadow: var(--mm-shadow-card);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mm-maker__link h2 {
+  margin: 0;
+  font-family: var(--mm-font-display);
+  font-size: 20px;
+}
+
+.mm-maker__link code {
+  display: block;
+  background: var(--mm-white);
+  border: 2px solid var(--mm-ink);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  max-height: 86px;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+
+/* --- shared controls ------------------------------------------------------ */
+
+.mm-field__label {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.mm-field select,
+.mm-field input[type='search'] {
+  min-height: 48px;
+  padding: 0 12px;
+  border: var(--mm-border) solid var(--mm-ink);
+  border-radius: 12px;
+  background: var(--mm-white);
+  font-size: 16px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.mm-field input[type='range'] {
+  width: 100%;
+  max-width: 420px;
+  min-height: var(--mm-tap);
+  accent-color: var(--mm-deep-pink);
+}
+
+.mm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 18px;
+  border: var(--mm-border) solid var(--mm-ink);
+  border-radius: var(--mm-radius-pill);
+  background: var(--mm-card);
+  color: var(--mm-ink);
+  font-family: var(--mm-font-body);
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.mm-chip--on {
+  background: var(--mm-ink);
+  color: var(--mm-sunshine);
+}
+
+.mm-chip--hand {
+  font-size: 19px;
+  font-weight: 400;
+  border-radius: 14px;
+  min-height: 52px;
+}
+
+.mm-chip__inks {
+  display: inline-flex;
+  border: 2px solid currentColor;
+  border-radius: var(--mm-radius-pill);
+  overflow: hidden;
+}
+
+.mm-chip__inks span {
+  width: 13px;
+  height: 13px;
+  display: block;
+}
+
+.mm-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.mm-swatches--tight {
+  gap: 12px;
+}
+
+.mm-swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  font-family: var(--mm-font-body);
+  color: var(--mm-ink);
+  min-height: var(--mm-tap);
+}
+
+.mm-swatch__dot {
+  display: block;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: var(--mm-border) solid var(--mm-ink);
+}
+
+.mm-swatch__dot--on,
+.mm-dot--on {
+  box-shadow:
+    0 0 0 3px var(--mm-card),
+    0 0 0 6px var(--mm-ink);
+}
+
+.mm-swatch__name {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.mm-dot {
+  width: var(--mm-tap);
+  height: var(--mm-tap);
+  border-radius: 50%;
+  border: var(--mm-border) solid var(--mm-ink);
+  cursor: pointer;
+  padding: 0;
+}
+
+.mm-check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--mm-tap);
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.mm-check input {
+  width: 24px;
+  height: 24px;
+  accent-color: var(--mm-deep-pink);
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .mm-maker__preview {
+    position: static;
+  }
+
+  .mm-maker__stage {
+    padding: 16px 8px;
+  }
+
+  .mm-maker__stage .mm-cassette {
+    transform: scale(0.8);
+    transform-origin: top center;
+    margin-bottom: -48px;
+  }
+}
