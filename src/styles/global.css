@@ -1,0 +1,59 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--mm-paper);
+  background-image: var(--mm-paper-bg);
+  background-size: var(--mm-paper-bg-size);
+  font-family: var(--mm-font-body);
+  color: var(--mm-ink);
+  -webkit-text-size-adjust: 100%;
+}
+
+a {
+  color: var(--mm-ink);
+}
+
+a:hover {
+  color: var(--mm-deep-pink);
+}
+
+/* Every interactive element gets a visible focus ring. */
+:focus-visible {
+  outline: 4px solid var(--mm-deep-pink);
+  outline-offset: 4px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+@keyframes mm-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
