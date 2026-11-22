@@ -1,0 +1,223 @@
+/**
+ * Riso layering ported from design-reference/JCard.dc.html.
+ *
+ * The reference draws this at 1020px wide across three panels. Here it is the
+ * spine plus the front only, scaled down to sit inside the J-card panel, with
+ * the proportions kept.
+ */
+
+.mm-riso {
+  display: flex;
+  border: var(--mm-border) solid var(--mm-ink);
+  border-radius: 6px;
+  box-shadow: var(--mm-shadow-button);
+  overflow: hidden;
+  aspect-ratio: 300 / 190;
+  flex: none;
+}
+
+/* --- spine ---------------------------------------------------------------- */
+
+.mm-riso__spine {
+  position: relative;
+  flex: 0 0 21px;
+  border-right: 2px dashed var(--mm-ink);
+  background-color: var(--mm-riso-paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.mm-riso__spine-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 55px;
+  background-image: radial-gradient(var(--riso-a) 1.2px, transparent 1.5px);
+  background-size: 5px 5px;
+  mix-blend-mode: multiply;
+}
+
+.mm-riso__spine-block {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 32px;
+  background: var(--riso-a);
+  mix-blend-mode: multiply;
+}
+
+.mm-riso__spine-text {
+  position: relative;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-height: 100%;
+  padding: 6px 0;
+}
+
+.mm-riso__spine-title {
+  font-family: var(--mm-font-display);
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--riso-b);
+}
+
+.mm-riso__spine-length {
+  font-family: var(--mm-font-marker);
+  font-size: 8px;
+  color: var(--riso-b);
+}
+
+/* --- front ---------------------------------------------------------------- */
+
+.mm-riso__front {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 12px 11px 10px;
+  background-color: var(--mm-riso-paper);
+  background-image: radial-gradient(rgba(17, 17, 17, 0.06) 0.8px, transparent 1px);
+  background-size: 4px 4px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* The halftone halo, printed in ink B and knocked off register. */
+.mm-riso__halo {
+  position: absolute;
+  left: 42%;
+  top: 44%;
+  width: 115px;
+  height: 115px;
+  border-radius: 50%;
+  background-image: radial-gradient(var(--riso-b) 1.4px, transparent 1.7px);
+  background-size: 5px 5px;
+  mix-blend-mode: multiply;
+  transform: translate(var(--riso-x), var(--riso-y));
+}
+
+.mm-riso__blob {
+  position: absolute;
+  left: 64%;
+  top: 72%;
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  background: var(--riso-a);
+  mix-blend-mode: multiply;
+}
+
+.mm-riso__bar {
+  position: absolute;
+  left: -8%;
+  top: 76%;
+  width: 82%;
+  height: 16px;
+  background: var(--riso-a);
+  mix-blend-mode: multiply;
+  transform: rotate(-6deg);
+}
+
+/* The same bar again in ink B, offset: this is the misregistration. */
+.mm-riso__bar-outline {
+  position: absolute;
+  left: -8%;
+  top: 76%;
+  width: 82%;
+  height: 16px;
+  border: 2px solid var(--riso-b);
+  mix-blend-mode: multiply;
+  transform: translate(var(--riso-x), var(--riso-y)) rotate(-6deg);
+}
+
+.mm-riso__star {
+  position: absolute;
+  right: 8%;
+  top: 7%;
+  width: 46px;
+  height: 46px;
+  background: var(--riso-a);
+  mix-blend-mode: multiply;
+  transform: rotate(10deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: polygon(
+    50% 0%,
+    61% 18%,
+    82% 10%,
+    79% 32%,
+    100% 38%,
+    84% 54%,
+    96% 74%,
+    73% 76%,
+    68% 98%,
+    50% 84%,
+    32% 98%,
+    27% 76%,
+    4% 74%,
+    16% 54%,
+    0% 38%,
+    21% 32%,
+    18% 10%,
+    39% 18%
+  );
+}
+
+.mm-riso__star span {
+  font-family: var(--mm-font-display);
+  font-size: 7px;
+  line-height: 1.05;
+  text-align: center;
+  color: var(--riso-b);
+  max-width: 34px;
+}
+
+.mm-riso__text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.mm-riso__title {
+  margin: 0;
+  font-family: var(--mm-font-display);
+  font-size: 22px;
+  line-height: 0.95;
+  max-width: 62%;
+  color: var(--riso-b);
+  text-shadow: var(--riso-shadow);
+  overflow-wrap: anywhere;
+}
+
+.mm-riso__credits {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  color: var(--riso-b);
+}
+
+.mm-riso__to {
+  font-family: var(--mm-font-marker);
+  font-size: 14px;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.mm-riso__from {
+  font-family: var(--mm-font-caveat);
+  font-size: 15px;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}

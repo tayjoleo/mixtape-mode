@@ -231,12 +231,67 @@ export function usePlayer(enabled: boolean) {
     [activate, patch, snapshot.deviceId],
   );
 
+  /**
+   * The transport controls all go through the SDK rather than the Web API.
+   * Playback was started with the whole side as `uris`, so the SDK's own queue
+   * is exactly this side: stepping through it needs no round trip, and never
+   * wanders onto a track that is not on the tape.
+   */
   const toggle = useCallback(async () => {
-    if (!playerRef.current) return;
     try {
-      await playerRef.current.togglePlay();
+      await playerRef.current?.togglePlay();
     } catch (error) {
       logDebug('error', 'togglePlay failed', error);
+    }
+  }, []);
+
+  const pause = useCallback(async () => {
+    try {
+      await playerRef.current?.pause();
+    } catch (error) {
+      logDebug('error', 'pause failed', error);
+    }
+  }, []);
+
+  const resume = useCallback(async () => {
+    try {
+      await playerRef.current?.resume();
+    } catch (error) {
+      logDebug('error', 'resume failed', error);
+    }
+  }, []);
+
+  const next = useCallback(async () => {
+    try {
+      await playerRef.current?.nextTrack();
+    } catch (error) {
+      logDebug('error', 'nextTrack failed', error);
+    }
+  }, []);
+
+  const previous = useCallback(async () => {
+    try {
+      await playerRef.current?.previousTrack();
+    } catch (error) {
+      logDebug('error', 'previousTrack failed', error);
+    }
+  }, []);
+
+  const seek = useCallback(async (positionMs: number) => {
+    try {
+      await playerRef.current?.seek(positionMs);
+    } catch (error) {
+      logDebug('error', 'seek failed', error);
+    }
+  }, []);
+
+  /** Polled for the progress bar, which has to move between SDK events. */
+  const getState = useCallback(async (): Promise<Spotify.WebPlaybackState | null> => {
+    try {
+      return (await playerRef.current?.getCurrentState()) ?? null;
+    } catch (error) {
+      logDebug('error', 'getCurrentState failed', error);
+      return null;
     }
   }, []);
 
@@ -276,6 +331,12 @@ export function usePlayer(enabled: boolean) {
     activate,
     play,
     toggle,
+    pause,
+    resume,
+    next,
+    previous,
+    seek,
+    getState,
     playInSpotifyApp,
   };
 }

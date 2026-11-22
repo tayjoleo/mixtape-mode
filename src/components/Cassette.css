@@ -1,0 +1,448 @@
+/**
+ * Geometry ported from design-reference/Cassette.dc.html.
+ *
+ * A fixed 360x228 drawing, 372x240 once the hard shadow is counted. Every
+ * number below is from that file. Do not "tidy" them: they are the design.
+ * Scale the whole thing with the `scale` prop rather than editing sizes here.
+ */
+
+.mm-cassette {
+  position: relative;
+  font-family: var(--mm-font-body);
+  color: var(--mm-ink);
+  flex: none;
+}
+
+.mm-cassette__scaler {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 372px;
+  height: 240px;
+  transform-origin: top left;
+}
+
+.mm-cassette__shell {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 360px;
+  height: 228px;
+  border: 4px solid var(--mm-ink);
+  border-radius: 16px;
+  background: var(--cassette-shell);
+  box-shadow: 10px 10px 0 var(--mm-ink);
+  overflow: hidden;
+}
+
+/* --- the innards, visible through a clear shell --------------------------- */
+
+.mm-cassette__pack {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid var(--mm-ink);
+}
+
+.mm-cassette__pack--left {
+  left: 74px;
+  top: 57px;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, #6b4a36 0 30%, #4a3022 31% 100%);
+}
+
+.mm-cassette__pack--right {
+  left: 186px;
+  top: 69px;
+  width: 76px;
+  height: 76px;
+  background: radial-gradient(circle, #6b4a36 0 40%, #4a3022 41% 100%);
+}
+
+.mm-cassette__tape-path {
+  position: absolute;
+  left: 22px;
+  top: 186px;
+  width: 308px;
+  height: 3px;
+  background: #4a3022;
+}
+
+.mm-cassette__roller {
+  position: absolute;
+  top: 176px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2.5px solid var(--mm-ink);
+  background: var(--mm-card);
+}
+
+.mm-cassette__roller--left {
+  left: 18px;
+}
+
+.mm-cassette__roller--right {
+  left: 314px;
+}
+
+.mm-cassette__guide {
+  position: absolute;
+  left: 168px;
+  top: 150px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2.5px solid var(--mm-ink);
+  background: #dadada;
+}
+
+.mm-cassette__slot {
+  position: absolute;
+  top: 60px;
+  width: 8px;
+  height: 90px;
+  border: 2px solid rgba(17, 17, 17, 0.5);
+  border-radius: 4px;
+}
+
+.mm-cassette__slot--left {
+  left: 6px;
+}
+
+.mm-cassette__slot--right {
+  left: 338px;
+}
+
+/* --- surface -------------------------------------------------------------- */
+
+.mm-cassette__halftone {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.35) 1.4px, transparent 1.6px);
+  background-size: 9px 9px;
+  pointer-events: none;
+}
+
+.mm-cassette__screw {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2.5px solid var(--mm-ink);
+  border-radius: 50%;
+  background: #dadada;
+}
+
+.mm-cassette__screw--tl {
+  left: 6px;
+  top: 6px;
+}
+
+.mm-cassette__screw--tr {
+  left: 334px;
+  top: 6px;
+}
+
+.mm-cassette__screw--bl {
+  left: 6px;
+  top: 202px;
+}
+
+.mm-cassette__screw--br {
+  left: 334px;
+  top: 202px;
+}
+
+/* --- stickers ------------------------------------------------------------- */
+
+.mm-cassette__sticker {
+  position: absolute;
+  left: 18px;
+  top: 12px;
+  width: 316px;
+  height: 132px;
+}
+
+.mm-cassette__sticker--lined {
+  border: 3px solid var(--mm-ink);
+  border-radius: 8px;
+  background-color: var(--mm-card);
+  background-image: repeating-linear-gradient(
+    180deg,
+    transparent 0px,
+    transparent 21px,
+    #8ec5ea 21px,
+    #8ec5ea 22px
+  );
+  overflow: hidden;
+}
+
+.mm-cassette__sticker-rule {
+  height: 12px;
+  background: var(--mm-pink);
+  border-bottom: 3px solid var(--mm-ink);
+}
+
+.mm-cassette__sticker--tape {
+  transform: rotate(-1.2deg);
+  filter: drop-shadow(3px 3px 0 var(--mm-ink));
+}
+
+.mm-cassette__masking {
+  width: 100%;
+  height: 100%;
+  background-color: #ebddb0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.04) 0px,
+    rgba(0, 0, 0, 0.04) 2px,
+    transparent 2px,
+    transparent 7px
+  );
+  clip-path: polygon(
+    2% 0,
+    98% 0,
+    100% 8%,
+    98.5% 18%,
+    100% 30%,
+    98% 44%,
+    100% 58%,
+    98.5% 72%,
+    100% 86%,
+    98% 100%,
+    2% 100%,
+    0 88%,
+    1.5% 74%,
+    0 60%,
+    2% 46%,
+    0 32%,
+    1.5% 18%,
+    0 6%
+  );
+}
+
+.mm-cassette__sticker--retail {
+  border: 3px solid var(--mm-ink);
+  border-radius: 8px;
+  background-color: var(--mm-sunshine);
+  background-image: radial-gradient(var(--mm-pink) 2px, transparent 2.4px);
+  background-size: 10px 10px;
+}
+
+.mm-cassette__retail-box {
+  position: absolute;
+  left: 62px;
+  top: 22px;
+  width: 232px;
+  height: 46px;
+  border: 2.5px solid var(--mm-ink);
+  border-radius: 6px;
+  background: var(--mm-white);
+}
+
+.mm-cassette__retail-c,
+.mm-cassette__retail-60 {
+  position: absolute;
+  left: 298px;
+  font-family: var(--mm-font-display);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.mm-cassette__retail-c {
+  top: 22px;
+}
+
+.mm-cassette__retail-60 {
+  top: 36px;
+}
+
+.mm-cassette__sticker--strip {
+  height: 62px;
+  border: 3px solid var(--mm-ink);
+  border-radius: 8px;
+  background: var(--mm-card);
+  overflow: hidden;
+}
+
+.mm-cassette__strip-band {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 34px;
+  border-left: 3px solid var(--mm-ink);
+  background: linear-gradient(90deg, #e63946 0 33%, #ffd23f 33% 66%, #2ec4f1 66% 100%);
+}
+
+.mm-cassette__strip-rule {
+  position: absolute;
+  left: 0;
+  right: 34px;
+  bottom: 0;
+  height: 7px;
+  border-top: 2.5px solid var(--mm-ink);
+  background: var(--mm-pink);
+}
+
+/* --- label ---------------------------------------------------------------- */
+
+.mm-cassette__side {
+  position: absolute;
+  left: 26px;
+  top: 32px;
+  width: 30px;
+  height: 30px;
+  border: 3px solid var(--mm-ink);
+  border-radius: 6px;
+  background: var(--mm-ink);
+  color: var(--mm-sunshine);
+  font-family: var(--mm-font-display);
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+}
+
+.mm-cassette__label {
+  position: absolute;
+  left: 66px;
+  top: 24px;
+  width: 226px;
+  height: 44px;
+  line-height: 44px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--cassette-label-font);
+  font-size: var(--cassette-label-size);
+  color: var(--cassette-ink);
+}
+
+.mm-cassette__doodles {
+  position: absolute;
+  left: 62px;
+  top: 16px;
+  width: 240px;
+  height: 64px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.mm-cassette__doodles path {
+  fill: none;
+  stroke: var(--cassette-ink);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* --- window and reels ----------------------------------------------------- */
+
+.mm-cassette__window {
+  position: absolute;
+  left: 91px;
+  top: 80px;
+  width: 170px;
+  height: 54px;
+  border: 3px solid var(--mm-ink);
+  border-radius: 27px;
+  background: var(--cassette-window);
+  overflow: hidden;
+}
+
+.mm-cassette__window-tape {
+  position: absolute;
+  left: 52px;
+  top: 30px;
+  width: 60px;
+  height: 6px;
+  background: #6b4a36;
+}
+
+.mm-cassette__spool {
+  position: absolute;
+  border-radius: 50%;
+  background: #5a3b2a;
+}
+
+.mm-cassette__spool--left {
+  left: 10px;
+  top: 4px;
+  width: 40px;
+  height: 40px;
+}
+
+.mm-cassette__spool--right {
+  left: 114px;
+  top: 8px;
+  width: 32px;
+  height: 32px;
+}
+
+.mm-cassette__reel {
+  position: absolute;
+  top: 6px;
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--mm-ink);
+  border-radius: 50%;
+  background: var(--cassette-reel);
+  animation: mm-spin 1.4s linear infinite;
+  animation-play-state: var(--cassette-spin);
+}
+
+.mm-cassette__reel--left {
+  left: 12px;
+}
+
+.mm-cassette__reel--right {
+  left: 112px;
+}
+
+.mm-cassette__spoke {
+  position: absolute;
+  left: 13px;
+  top: 2px;
+  width: 4px;
+  height: 26px;
+  background: var(--mm-ink);
+}
+
+.mm-cassette__spoke--b {
+  transform: rotate(60deg);
+}
+
+.mm-cassette__spoke--c {
+  transform: rotate(120deg);
+}
+
+.mm-cassette__hub {
+  position: absolute;
+  left: 9px;
+  top: 9px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--mm-ink);
+  border-radius: 50%;
+  background: var(--mm-white);
+}
+
+/* --- the shutter at the bottom -------------------------------------------- */
+
+.mm-cassette__shutter {
+  position: absolute;
+  left: 66px;
+  top: 156px;
+  width: 220px;
+  height: 64px;
+}
+
+/*
+ * Reduced motion: the reels hold still. The player shows a separate "playing"
+ * indicator in their place, as spec section 6 asks.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .mm-cassette__reel {
+    animation: none;
+  }
+}

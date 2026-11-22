@@ -4,6 +4,7 @@ import { usePlayer } from '../hooks/usePlayer';
 import { logDebug } from '../lib/debug';
 import type { Device, Me } from '../lib/spotify';
 import { parseTrackId, trackUri } from '../lib/trackId';
+import { TEST_TAPE_HASH } from '../tape/testTape';
 import { currentRedirectUri } from '../lib/urls';
 import NotPremium from './NotPremium';
 
@@ -210,6 +211,22 @@ export default function GoNoGo({ me, onLogout }: { me: Me; onLogout: () => void 
             {player.state.repeat_mode}.
           </p>
         ) : null}
+      </section>
+
+      <section className="mm-card mm-card--wide" aria-labelledby="mm-gonogo-tape">
+        <div className="mm-card__head">
+          <span className="mm-step">M3</span>
+          <h2 id="mm-gonogo-tape">The test tape</h2>
+        </div>
+        <p className="mm-note">
+          A hardcoded tape for trying the player: four songs on Side A, three on Side B, sealed,
+          with doodles on the label. It goes away once the maker can make real ones.
+        </p>
+        <div className="mm-btn-row">
+          <a className="mm-btn mm-btn--primary" href={TEST_TAPE_HASH}>
+            Play the test tape
+          </a>
+        </div>
       </section>
 
       {offerFallback ? (

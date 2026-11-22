@@ -1,21 +1,28 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import AppShell from './components/AppShell';
 import DebugPanel from './components/DebugPanel';
 import { useAuth } from './hooks/useAuth';
 import { debugEnabled, logDebug } from './lib/debug';
 import { redactPageUrl } from './lib/redact';
+import { useRoute } from './lib/router';
+import { readTapeFromPayload } from './tape/encode';
+import ChewedUp from './screens/ChewedUp';
 import GoNoGo from './screens/GoNoGo';
 import NotOnGuestList from './screens/NotOnGuestList';
 import NotPremium from './screens/NotPremium';
+import Offline from './screens/Offline';
+import Player from './screens/Player';
 import './styles/ui.css';
 
 /**
- * Milestone 1 only: the go / no-go harness. Routing, the player, the maker and
- * the shelf arrive in later milestones.
+ * Milestone 3: the listener's half of the app is real. The shelf and the maker
+ * are still the go / no-go harness and arrive in M4 and M5.
  */
 export default function App() {
   const auth = useAuth();
+  const route = useRoute();
   const showDebug = debugEnabled();
+  const online = useOnline();
 
   useEffect(() => {
     logDebug('app', 'App mounted', {
@@ -33,23 +40,25 @@ export default function App() {
   );
 
   function body() {
-    if (!import.meta.env.VITE_SPOTIFY_CLIENT_ID) {
+    if (!import.meta.env.VITE_SPOTIFY_CLIENT_ID) return <NoClientId />;
+
+    // A tape is visible to anyone, logged in or not, so it is decoded and shown
+    // before any of the auth states are considered. Spec section 6.
+    if (route.name === 'tape') {
+      const result = readTapeFromPayload(route.payload);
+      if (!result.ok) return <ChewedUp reason={result.reason} />;
+
       return (
-        <AppShell>
-          <h1>No Client ID</h1>
-          <div className="mm-card">
-            <p className="mm-lede">
-              This build has no <code>VITE_SPOTIFY_CLIENT_ID</code>, so it cannot talk to Spotify.
-            </p>
-            <p className="mm-note">
-              For dev, copy <code>.env.example</code> to <code>.env.local</code> and paste the
-              Client ID from the Spotify dashboard, then restart the dev server. For the Pages
-              build, set a repository variable of the same name.
-            </p>
-          </div>
-        </AppShell>
+        <Player
+          tape={result.tape}
+          me={auth.status === 'logged-in' ? auth.me : null}
+          onLogin={auth.login}
+          onLogout={auth.logout}
+        />
       );
     }
+
+    if (!online) return <Offline />;
 
     switch (auth.status) {
       case 'loading':
@@ -75,6 +84,44 @@ export default function App() {
         return <LoggedOut error={auth.error} onLogin={auth.login} />;
     }
   }
+}
+
+function useOnline(): boolean {
+  const [online, setOnline] = useState(() => navigator.onLine);
+
+  useEffect(() => {
+    const up = () => setOnline(true);
+    const down = () => {
+      logDebug('app', 'Went offline');
+      setOnline(false);
+    };
+    window.addEventListener('online', up);
+    window.addEventListener('offline', down);
+    return () => {
+      window.removeEventListener('online', up);
+      window.removeEventListener('offline', down);
+    };
+  }, []);
+
+  return online;
+}
+
+function NoClientId() {
+  return (
+    <AppShell>
+      <h1>No Client ID</h1>
+      <div className="mm-card">
+        <p className="mm-lede">
+          This build has no <code>VITE_SPOTIFY_CLIENT_ID</code>, so it cannot talk to Spotify.
+        </p>
+        <p className="mm-note">
+          For dev, copy <code>.env.example</code> to <code>.env.local</code> and paste the Client ID
+          from the Spotify dashboard, then restart the dev server. For the Pages build, set a
+          repository variable of the same name.
+        </p>
+      </div>
+    </AppShell>
+  );
 }
 
 function LoggedOut({ error, onLogin }: { error?: string | undefined; onLogin: () => void }) {

@@ -1,0 +1,30 @@
+.mm-spotify-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  width: auto;
+  flex: none;
+}
+
+.mm-spotify-mark--large {
+  height: 26px;
+}
+
+/* The labelled stand-in, matching the design reference's dashed box. */
+.mm-spotify-mark--placeholder {
+  width: 74px;
+  height: 22px;
+  border: 2px dashed #6b6b6b;
+  border-radius: 6px;
+  font-family: var(--mm-font-body);
+  font-size: 9px;
+  color: #3a3a3a;
+  white-space: nowrap;
+}
+
+.mm-spotify-mark--large.mm-spotify-mark--placeholder {
+  width: 112px;
+  height: 34px;
+  font-size: 11px;
+}

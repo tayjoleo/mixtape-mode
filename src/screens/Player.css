@@ -1,0 +1,330 @@
+/*
+ * The player is horizontal: cassette on the left, controls on the right.
+ *
+ * A cassette is a 360x228 landscape object, so it wants the phone held
+ * sideways. A landscape phone and a desktop therefore share one layout, and
+ * portrait is the special case rather than the default. See docs/DECISIONS.md.
+ */
+
+.mm-player {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mm-player__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 20px;
+  background: var(--mm-sunshine);
+  border-bottom: var(--mm-border-thick) solid var(--mm-ink);
+  flex: none;
+}
+
+.mm-player__home {
+  font-family: var(--mm-font-display);
+  font-size: 15px;
+  letter-spacing: 1px;
+  text-decoration: none;
+}
+
+.mm-player__bar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mm-player__from {
+  font-family: var(--mm-font-caveat);
+  font-size: 22px;
+}
+
+/* --- the stage ------------------------------------------------------------ */
+
+.mm-player__stage {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 4vw, 48px);
+  padding: clamp(14px, 3vw, 32px);
+  flex-wrap: wrap;
+}
+
+.mm-player__deck {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.mm-player__controls {
+  flex: 1 1 320px;
+  max-width: 420px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mm-player__title {
+  margin: 0;
+  font-family: var(--mm-font-display);
+  font-size: clamp(22px, 3vw, 30px);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.mm-player__where {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mm-player__position {
+  font-family: var(--mm-font-display);
+  font-size: 17px;
+}
+
+.mm-player__hidden-note {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Shown instead of the spinning reels when motion is reduced. */
+.mm-player__playing-dot {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.mm-player__playing-dot::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--mm-pink);
+  border: 2px solid var(--mm-ink);
+}
+
+/* --- progress ------------------------------------------------------------- */
+
+.mm-player__bar-track {
+  height: 18px;
+  border: var(--mm-border) solid var(--mm-ink);
+  border-radius: var(--mm-radius-pill);
+  background: var(--mm-white);
+  overflow: hidden;
+}
+
+.mm-player__bar-fill {
+  height: 100%;
+  background: var(--mm-pink);
+  transition: width 220ms linear;
+}
+
+.mm-player__times {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* --- transport ------------------------------------------------------------ */
+
+.mm-player__transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.mm-player__round {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: var(--mm-border-thick) solid var(--mm-ink);
+  background: var(--mm-card);
+  box-shadow: var(--mm-shadow-button);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  flex: none;
+}
+
+.mm-player__round svg {
+  fill: none;
+  stroke: var(--mm-ink);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mm-player__round--play {
+  width: 82px;
+  height: 82px;
+  background: var(--mm-pink);
+  box-shadow: 6px 6px 0 var(--mm-ink);
+}
+
+.mm-player__round--play svg {
+  stroke-width: 3.5;
+}
+
+.mm-player__play-icon {
+  fill: var(--mm-ink) !important;
+  stroke-width: 2 !important;
+}
+
+.mm-player__round:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--mm-ink);
+}
+
+.mm-player__round:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* --- secondary buttons ---------------------------------------------------- */
+
+.mm-player__buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.mm-player__wide {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 52px;
+  border: var(--mm-border) solid var(--mm-ink);
+  border-radius: 16px;
+  background: var(--mm-card);
+  box-shadow: var(--mm-shadow-button);
+  font-family: var(--mm-font-display);
+  font-size: 13px;
+  color: var(--mm-ink);
+  cursor: pointer;
+  padding: 0 10px;
+}
+
+.mm-player__wide--sun {
+  background: var(--mm-sunshine);
+}
+
+.mm-player__wide:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* --- messages ------------------------------------------------------------- */
+
+.mm-player__status {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.mm-player__end {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  background: var(--mm-lime);
+  border: var(--mm-border) solid var(--mm-ink);
+  border-radius: 14px;
+  font-size: 15px;
+}
+
+.mm-player__fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  background: var(--mm-white);
+  border: var(--mm-border) solid var(--mm-ink);
+  border-radius: 14px;
+}
+
+.mm-player__fallback p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+/*
+ * Portrait phones: stack it, the way Player.dc.html draws it, and shrink the
+ * cassette to fit the narrower screen. Nothing is blocked behind a rotation.
+ */
+@media (orientation: portrait) and (max-width: 740px) {
+  .mm-player__stage {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 14px;
+  }
+
+  .mm-player__deck {
+    transform: scale(0.82);
+    transform-origin: top center;
+    margin-bottom: -42px;
+  }
+
+  .mm-player__controls {
+    max-width: none;
+  }
+
+  .mm-player__title,
+  .mm-player__where {
+    text-align: center;
+  }
+
+  .mm-player__where {
+    align-items: center;
+  }
+}
+
+/* A short landscape window, which is most phones held sideways. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .mm-player__stage {
+    gap: 18px;
+    padding: 10px 16px;
+    flex-wrap: nowrap;
+  }
+
+  .mm-player__deck {
+    transform: scale(0.78);
+    transform-origin: center left;
+    margin-right: -78px;
+  }
+
+  .mm-player__title {
+    font-size: 20px;
+  }
+
+  .mm-player__round {
+    width: 52px;
+    height: 52px;
+  }
+
+  .mm-player__round--play {
+    width: 68px;
+    height: 68px;
+  }
+
+  .mm-player__controls {
+    gap: 8px;
+  }
+}
