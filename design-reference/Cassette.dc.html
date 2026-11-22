@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cassette</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600&family=Gochi+Hand&family=Permanent+Marker&family=Rock+Salt&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 372px; height: 240px; position: relative; font-family: 'Space Grotesk', sans-serif; color: #111111">
+  <div style="position: absolute; left: 0; top: 0; width: 360px; height: 228px; box-sizing: border-box; border: 4px solid #111111; border-radius: 16px; background: {{shell}}; box-shadow: 10px 10px 0 #111111; overflow: hidden">
+    <sc-if value="{{clear}}" hint-placeholder-val="{{false}}">
+      <div aria-hidden="true" style="position: absolute; left: 74px; top: 57px; width: 100px; height: 100px; box-sizing: border-box; border-radius: 50%; border: 2px solid #111111; background: radial-gradient(circle, #6B4A36 0 30%, #4A3022 31% 100%)"></div>
+      <div aria-hidden="true" style="position: absolute; left: 186px; top: 69px; width: 76px; height: 76px; box-sizing: border-box; border-radius: 50%; border: 2px solid #111111; background: radial-gradient(circle, #6B4A36 0 40%, #4A3022 41% 100%)"></div>
+      <div aria-hidden="true" style="position: absolute; left: 22px; top: 186px; width: 308px; height: 3px; background: #4A3022"></div>
+      <div aria-hidden="true" style="position: absolute; left: 18px; top: 176px; width: 20px; height: 20px; box-sizing: border-box; border-radius: 50%; border: 2.5px solid #111111; background: #FFFDF5"></div>
+      <div aria-hidden="true" style="position: absolute; left: 314px; top: 176px; width: 20px; height: 20px; box-sizing: border-box; border-radius: 50%; border: 2.5px solid #111111; background: #FFFDF5"></div>
+      <div aria-hidden="true" style="position: absolute; left: 168px; top: 150px; width: 16px; height: 16px; box-sizing: border-box; border-radius: 50%; border: 2.5px solid #111111; background: #DADADA"></div>
+      <div aria-hidden="true" style="position: absolute; left: 6px; top: 60px; width: 8px; height: 90px; box-sizing: border-box; border: 2px solid rgba(17,17,17,0.5); border-radius: 4px"></div>
+      <div aria-hidden="true" style="position: absolute; left: 338px; top: 60px; width: 8px; height: 90px; box-sizing: border-box; border: 2px solid rgba(17,17,17,0.5); border-radius: 4px"></div>
+    </sc-if>
+
+    <div aria-hidden="true" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-image: radial-gradient(rgba(255,255,255,0.35) 1.4px, transparent 1.6px); background-size: 9px 9px; pointer-events: none"></div>
+
+    <div aria-hidden="true" style="position: absolute; left: 6px; top: 6px; width: 12px; height: 12px; box-sizing: border-box; border: 2.5px solid #111111; border-radius: 50%; background: #DADADA"></div>
+    <div aria-hidden="true" style="position: absolute; left: 334px; top: 6px; width: 12px; height: 12px; box-sizing: border-box; border: 2.5px solid #111111; border-radius: 50%; background: #DADADA"></div>
+    <div aria-hidden="true" style="position: absolute; left: 6px; top: 202px; width: 12px; height: 12px; box-sizing: border-box; border: 2.5px solid #111111; border-radius: 50%; background: #DADADA"></div>
+    <div aria-hidden="true" style="position: absolute; left: 334px; top: 202px; width: 12px; height: 12px; box-sizing: border-box; border: 2.5px solid #111111; border-radius: 50%; background: #DADADA"></div>
+
+    <sc-if value="{{isLined}}" hint-placeholder-val="{{true}}">
+      <div style="position: absolute; left: 18px; top: 12px; width: 316px; height: 132px; box-sizing: border-box; border: 3px solid #111111; border-radius: 8px; background-color: #FFFDF5; background-image: repeating-linear-gradient(180deg, transparent 0px, transparent 21px, #8EC5EA 21px, #8EC5EA 22px); overflow: hidden">
+        <div style="height: 12px; background: #FF3D7F; border-bottom: 3px solid #111111"></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isTape}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; left: 18px; top: 12px; width: 316px; height: 132px; transform: rotate(-1.2deg); filter: drop-shadow(3px 3px 0 #111111)">
+        <div style="width: 100%; height: 100%; background-color: #EBDDB0; background-image: repeating-linear-gradient(90deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 2px, transparent 2px, transparent 7px); clip-path: polygon(2% 0, 98% 0, 100% 8%, 98.5% 18%, 100% 30%, 98% 44%, 100% 58%, 98.5% 72%, 100% 86%, 98% 100%, 2% 100%, 0 88%, 1.5% 74%, 0 60%, 2% 46%, 0 32%, 1.5% 18%, 0 6%)"></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isRetail}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; left: 18px; top: 12px; width: 316px; height: 132px; box-sizing: border-box; border: 3px solid #111111; border-radius: 8px; background-color: #FFD23F; background-image: radial-gradient(#FF3D7F 2px, transparent 2.4px); background-size: 10px 10px"></div>
+      <div style="position: absolute; left: 62px; top: 22px; width: 232px; height: 46px; box-sizing: border-box; border: 2.5px solid #111111; border-radius: 6px; background: #FFFFFF"></div>
+      <div style="position: absolute; left: 298px; top: 22px; font-family: 'Bungee', sans-serif; font-size: 12px; line-height: 1">C</div>
+      <div style="position: absolute; left: 298px; top: 36px; font-family: 'Bungee', sans-serif; font-size: 12px; line-height: 1">60</div>
+    </sc-if>
+
+    <sc-if value="{{isStrip}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; left: 18px; top: 12px; width: 316px; height: 62px; box-sizing: border-box; border: 3px solid #111111; border-radius: 8px; background: #FFFDF5; overflow: hidden">
+        <div style="position: absolute; right: 0; top: 0; bottom: 0; width: 34px; border-left: 3px solid #111111; background: linear-gradient(90deg, #E63946 0 33%, #FFD23F 33% 66%, #2EC4F1 66% 100%)"></div>
+        <div style="position: absolute; left: 0; right: 34px; bottom: 0; height: 7px; border-top: 2.5px solid #111111; background: #FF3D7F"></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{hasArt}}" hint-placeholder-val="{{false}}">
+      <img src="{{art}}" alt="Custom label art" style="position: absolute; left: 18px; top: 12px; width: 316px; height: 132px; box-sizing: border-box; border: 3px solid #111111; border-radius: 8px; object-fit: cover; background: #FFFDF5">
+    </sc-if>
+
+    <div style="position: absolute; left: 26px; top: 32px; width: 30px; height: 30px; box-sizing: border-box; border: 3px solid #111111; border-radius: 6px; background: #111111; color: #FFD23F; font-family: 'Bungee', sans-serif; font-size: 16px; line-height: 24px; text-align: center">{{side}}</div>
+
+    <sc-if value="{{noArt}}" hint-placeholder-val="{{true}}">
+    <div style="position: absolute; left: 66px; top: 24px; width: 226px; height: 44px; line-height: 44px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: '{{font}}', cursive; font-size: {{fontSize}}; color: {{ink}}">{{labelText}}</div>
+    </sc-if>
+
+    <svg viewBox="0 0 300 80" aria-hidden="true" style="position: absolute; left: 62px; top: 16px; width: 240px; height: 64px; overflow: visible; pointer-events: none">
+      <sc-for list="{{strokes}}" as="p" hint-placeholder-count="0">
+        <path d="{{p.d}}" style="fill: none; stroke: {{ink}}; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round"></path>
+      </sc-for>
+    </svg>
+
+    <div style="position: absolute; left: 91px; top: 80px; width: 170px; height: 54px; box-sizing: border-box; border: 3px solid #111111; border-radius: 27px; background: {{windowBg}}; overflow: hidden">
+      <div aria-hidden="true" style="position: absolute; left: 52px; top: 30px; width: 60px; height: 6px; background: #6B4A36"></div>
+      <div aria-hidden="true" style="position: absolute; left: 10px; top: 4px; width: 40px; height: 40px; border-radius: 50%; background: #5A3B2A"></div>
+      <div aria-hidden="true" style="position: absolute; left: 114px; top: 8px; width: 32px; height: 32px; border-radius: 50%; background: #5A3B2A"></div>
+      <div aria-hidden="true" style="position: absolute; left: 12px; top: 6px; width: 36px; height: 36px; box-sizing: border-box; border-radius: 50%; border: 3px solid #111111; background: {{reelColor}}; animation: mm-spin 1.4s linear infinite; animation-play-state: {{spinState}}">
+        <div style="position: absolute; left: 13px; top: 2px; width: 4px; height: 26px; background: #111111"></div>
+        <div style="position: absolute; left: 13px; top: 2px; width: 4px; height: 26px; background: #111111; transform: rotate(60deg)"></div>
+        <div style="position: absolute; left: 13px; top: 2px; width: 4px; height: 26px; background: #111111; transform: rotate(120deg)"></div>
+        <div style="position: absolute; left: 9px; top: 9px; width: 12px; height: 12px; box-sizing: border-box; border-radius: 50%; border: 2px solid #111111; background: #FFFFFF"></div>
+      </div>
+      <div aria-hidden="true" style="position: absolute; left: 112px; top: 6px; width: 36px; height: 36px; box-sizing: border-box; border-radius: 50%; border: 3px solid #111111; background: {{reelColor}}; animation: mm-spin 1.4s linear infinite; animation-play-state: {{spinState}}">
+        <div style="position: absolute; left: 13px; top: 2px; width: 4px; height: 26px; background: #111111"></div>
+        <div style="position: absolute; left: 13px; top: 2px; width: 4px; height: 26px; background: #111111; transform: rotate(60deg)"></div>
+        <div style="position: absolute; left: 13px; top: 2px; width: 4px; height: 26px; background: #111111; transform: rotate(120deg)"></div>
+        <div style="position: absolute; left: 9px; top: 9px; width: 12px; height: 12px; box-sizing: border-box; border-radius: 50%; border: 2px solid #111111; background: #FFFFFF"></div>
+      </div>
+    </div>
+
+    <svg viewBox="0 0 220 64" aria-hidden="true" style="position: absolute; left: 66px; top: 156px; width: 220px; height: 64px">
+      <polygon points="22,2 198,2 218,62 2,62" style="fill: rgba(17,17,17,0.18); stroke: #111111; stroke-width: 3; stroke-linejoin: round"></polygon>
+      <circle cx="60" cy="38" r="7" style="fill: #111111"></circle>
+      <circle cx="160" cy="38" r="7" style="fill: #111111"></circle>
+      <rect x="96" y="28" width="8" height="14" style="fill: #111111"></rect>
+      <rect x="116" y="28" width="8" height="14" style="fill: #111111"></rect>
+    </svg>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"shell":{"editor":"color","default":"#FF3D7F","options":["#FF3D7F","#FFD23F","#2EC4F1","#9BE564"]},"labelStyle":{"editor":"enum","default":"lined","options":["lined","tape","retail","strip"]},"labelText":{"editor":"text","default":"Kitchen Dance Party"},"font":{"editor":"enum","default":"Permanent Marker","options":["Permanent Marker","Caveat","Rock Salt","Gochi Hand"]},"ink":{"editor":"color","default":"#111111"},"side":{"editor":"enum","default":"A","options":["A","B"]},"spinning":{"editor":"boolean","default":false},"clear":{"editor":"boolean","default":false},"reelColor":{"editor":"color","default":"#F5F5F5","options":["#F5F5F5","#FF3D7F","#FFD23F","#8A8A96"]},"strokes":{"editor":null},"art":{"editor":null},"$preview":{"width":372,"height":240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const style = p.labelStyle ?? 'lined';
+    const font = p.font ?? 'Permanent Marker';
+    const sizes = { 'Permanent Marker': '24px', 'Caveat': '30px', 'Rock Salt': '17px', 'Gochi Hand': '26px' };
+    const raw = p.strokes ?? [];
+    return {
+      shell: p.shell ?? '#FF3D7F',
+      isLined: style === 'lined' && !p.art,
+      isTape: style === 'tape' && !p.art,
+      isRetail: style === 'retail' && !p.art,
+      isStrip: style === 'strip' && !p.art,
+      hasArt: !!p.art,
+      noArt: !p.art,
+      art: p.art ?? '',
+      clear: p.clear ?? false,
+      windowBg: (p.clear ?? false) ? 'rgba(255,255,255,0.18)' : '#2B2B33',
+      reelColor: p.reelColor ?? '#F5F5F5',
+      labelText: p.labelText ?? 'Kitchen Dance Party',
+      font: font,
+      fontSize: sizes[font] ?? '24px',
+      ink: p.ink ?? '#111111',
+      side: p.side ?? 'A',
+      spinState: p.spinning ? 'running' : 'paused',
+      strokes: raw.map((d) => ({ d: d }))
+    };
+  }
+}
+</script>
+</body>
+</html>

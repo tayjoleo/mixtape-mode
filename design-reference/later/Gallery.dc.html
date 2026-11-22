@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mixtape Mode: the gallery</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600&family=Gochi+Hand&family=Permanent+Marker&family=Rock+Salt&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#111111}a:hover{color:#D6246E}
+</style>
+</helmet>
+<div style="min-height: 100vh; background-color: #FFF4DC; background-image: radial-gradient(#EFCB9E 1.3px, transparent 1.5px); background-size: 14px 14px; font-family: 'Space Grotesk', sans-serif; color: #111111">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 32px; background: #FFD23F; border-bottom: 4px solid #111111">
+    <div style="display: flex; align-items: center; gap: 12px">
+      <span style="font-family: 'Bungee', sans-serif; font-size: 28px; letter-spacing: 1px">MIXTAPE MODE</span>
+      <span style="font-family: 'Permanent Marker', cursive; font-size: 15px; background: #FF3D7F; border: 3px solid #111111; border-radius: 8px; padding: 2px 10px; transform: rotate(-4deg)">beta</span>
+    </div>
+    <nav style="display: flex; flex-wrap: wrap; gap: 20px; font-weight: 700; font-size: 16px">
+      <a href="Shelf.dc.html" style="text-decoration: none">My tapes</a>
+      <a href="Main.dc.html" style="text-decoration: none">Make a tape</a>
+      <a href="Templates.dc.html" style="text-decoration: none">Templates</a>
+      <a href="#" style="text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 4px">Gallery</a>
+    </nav>
+  </header>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 18px">
+      <div style="display: flex; flex-direction: column; gap: 8px; max-width: 680px">
+        <h1 style="margin: 0; font-family: 'Bungee', sans-serif; font-size: 44px; line-height: 1.05">The gallery</h1>
+        <p style="margin: 0; font-size: 18px; line-height: 1.5">Covers made by people who use Mixtape Mode. Use one as it is or remix it into your own. Whoever made it gets credit on your J-card.</p>
+      </div>
+      <a href="Templates.dc.html" style="display: flex; align-items: center; min-height: 56px; padding: 0 24px; border: 4px solid #111111; border-radius: 16px; background: #FF3D7F; box-shadow: 6px 6px 0 #111111; font-family: 'Bungee', sans-serif; font-size: 17px; color: #111111; text-decoration: none">Publish your template</a>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; background: #FFFDF5; border: 4px solid #111111; border-radius: 18px; padding: 16px 18px">
+      <div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+        <label for="mm-search" style="font-weight: 700; font-size: 14px">Search templates</label>
+        <input id="mm-search" type="search" value="{{q}}" onChange="{{onQ}}" placeholder="riso, summer, zine..." style="min-height: 48px; padding: 0 14px; border: 3px solid #111111; border-radius: 12px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; background: #FFFFFF; color: #111111; box-sizing: border-box; width: 100%">
+      </div>
+      <div style="flex: 0 1 200px; display: flex; flex-direction: column; gap: 6px">
+        <label for="mm-sort" style="font-weight: 700; font-size: 14px">Sort</label>
+        <select id="mm-sort" value="{{sort}}" onChange="{{onSort}}" style="min-height: 48px; padding: 0 12px; border: 3px solid #111111; border-radius: 12px; font-family: 'Space Grotesk', sans-serif; font-size: 16px; background: #FFFFFF; color: #111111">
+          <option value="popular">Most used</option>
+          <option value="new">Newest</option>
+        </select>
+      </div>
+      <div style="flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{chips}}" as="c" hint-placeholder-count="9">
+          <button type="button" onClick="{{c.pick}}" aria-pressed="{{c.on}}" style="min-height: 44px; padding: 0 16px; border: 3px solid #111111; border-radius: 999px; background: {{c.bg}}; color: {{c.fg}}; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer">{{c.name}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+      <div style="flex: 1 1 640px; min-width: 0">
+        <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+          <div style="border: 4px dashed #111111; border-radius: 18px; padding: 40px 24px; text-align: center; background: #FFFDF5; display: flex; flex-direction: column; gap: 12px; align-items: center">
+            <span style="font-family: 'Bungee', sans-serif; font-size: 20px">Nothing matches yet</span>
+            <a href="Templates.dc.html" style="font-weight: 700; font-size: 16px">Make the first one</a>
+          </div>
+        </sc-if>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(205px, 1fr)); gap: 26px 20px">
+          <sc-for list="{{items}}" as="t" hint-placeholder-count="12">
+            <button type="button" onClick="{{t.pick}}" aria-pressed="{{t.on}}" aria-label="{{t.title}} by {{t.maker}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 6px; border: 3px solid {{t.ring}}; border-radius: 14px; background: transparent; cursor: pointer; text-align: left; font-family: 'Space Grotesk', sans-serif; color: #111111">
+              <div style="width: 195px; height: 305px; box-shadow: 6px 6px 0 #111111">
+                <dc-import name="Cover" kind="{{t.kind}}" a="{{t.a}}" b="{{t.b}}" cover-title="{{t.title}}" hint-size="195px,305px"></dc-import>
+              </div>
+              <span style="font-weight: 700; font-size: 15px; margin-top: 4px">{{t.title}}</span>
+              <span style="font-size: 13px">{{t.maker}} · {{t.tag}}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <aside style="flex: 1 1 340px; min-width: 0; box-sizing: border-box; background: #FFFDF5; border: 4px solid #111111; border-radius: 20px; box-shadow: 8px 8px 0 #111111; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+        <div style="width: 293px; height: 458px; max-width: 100%; position: relative; overflow: hidden; align-self: center">
+          <div style="position: absolute; left: 0; top: 0; transform: scale(1.5); transform-origin: top left">
+            <dc-import name="Cover" kind="{{cur.kind}}" a="{{cur.a}}" b="{{cur.b}}" cover-title="{{cur.title}}" hint-size="195px,305px"></dc-import>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <h2 style="margin: 0; font-family: 'Bungee', sans-serif; font-size: 24px; line-height: 1.1">{{cur.title}}</h2>
+          <span style="font-size: 15px">by <strong>{{cur.maker}}</strong> · {{cur.tag}}</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px">
+          <a href="Main.dc.html" style="display: flex; align-items: center; min-height: 52px; padding: 0 22px; border: 3px solid #111111; border-radius: 999px; background: #FF3D7F; box-shadow: 4px 4px 0 #111111; font-family: 'Bungee', sans-serif; font-size: 15px; color: #111111; text-decoration: none">Use this</a>
+          <a href="Templates.dc.html" style="display: flex; align-items: center; min-height: 52px; padding: 0 20px; border: 3px solid #111111; border-radius: 999px; background: #FFD23F; font-weight: 700; font-size: 15px; color: #111111; text-decoration: none">Remix it</a>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: flex-start; border-top: 3px dashed #111111; padding-top: 14px">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="flex: 0 0 auto; fill: none; stroke: #111111; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M4 12 a8 8 0 1 0 16 0 a8 8 0 1 0 -16 0"></path><path d="M12 8 V12 L15 14"></path></svg>
+          <span style="font-size: 14px; line-height: 1.45">Use or remix this and your J-card's back flap says "cover by {{cur.maker}}". Remixes keep the whole chain.</span>
+        </div>
+        <button type="button" style="align-self: flex-start; min-height: 44px; padding: 0 14px; border: 2px solid #111111; border-radius: 999px; background: transparent; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13px; color: #111111; cursor: pointer">Report this template</button>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tag: 'All', q: '', sort: 'popular', pick: 'riso-night' };
+  }
+  renderVals() {
+    const s = this.state;
+    const all = [
+      { id: 'riso-night', kind: 'riso', tag: 'Riso', title: 'Riso Night', maker: '@inkbleed', a: '#FF48B0', b: '#0078BF' },
+      { id: 'drive', kind: 'notebook', tag: 'Notebook', title: 'songs 4 the drive', maker: '@backseatdj', a: '#E63946', b: '#111111' },
+      { id: 'basement', kind: 'zine', tag: 'Zine', title: 'Basement Show', maker: '@xeroxkid', a: '#111111', b: '#111111' },
+      { id: 'high-bias', kind: 'stripe', tag: 'Retail', title: 'high bias, higher spirits', maker: '@c90club', a: '#E63946', b: '#111111' },
+      { id: 'ska', kind: 'checker', tag: 'Checker', title: 'Ska Lunch', maker: '@twotone', a: '#111111', b: '#111111' },
+      { id: 'summer', kind: 'polaroid', tag: 'Photo', title: 'summer 06', maker: '@shoeboxphotos', a: '#FFD23F', b: '#2EC4F1' },
+      { id: 'bangers', kind: 'stamp', tag: 'Stamp', title: 'Approved Bangers', maker: '@rubberstamp', a: '#E63946', b: '#111111' },
+      { id: 'bsides', kind: 'big', tag: 'Big type', title: 'B-Sides Only', maker: '@boldface', a: '#9BE564', b: '#111111' },
+      { id: 'green-room', kind: 'riso', tag: 'Riso', title: 'Green Room', maker: '@inkbleed', a: '#FF665E', b: '#00A95C' },
+      { id: 'pink-check', kind: 'checker', tag: 'Checker', title: 'Pink Check', maker: '@twotone', a: '#FF3D7F', b: '#111111' },
+      { id: 'lake', kind: 'polaroid', tag: 'Photo', title: 'lake weekend', maker: '@shoeboxphotos', a: '#2EC4F1', b: '#FF8A3D' },
+      { id: 'all-night', kind: 'big', tag: 'Big type', title: 'All Night Mix', maker: '@boldface', a: '#FFD23F', b: '#D6246E' }
+    ];
+    const tags = ['All', 'Riso', 'Notebook', 'Zine', 'Retail', 'Checker', 'Photo', 'Stamp', 'Big type'];
+    const q = s.q.trim().toLowerCase();
+    let list = all.filter((t) => (s.tag === 'All' || t.tag === s.tag) && (!q || (t.title + ' ' + t.tag + ' ' + t.maker).toLowerCase().indexOf(q) !== -1));
+    if (s.sort === 'new') { list = list.slice().reverse(); }
+    const cur = list.find((t) => t.id === s.pick) || list[0] || all[0];
+    return {
+      q: s.q,
+      sort: s.sort,
+      onQ: (e) => this.setState({ q: e.target.value }),
+      onSort: (e) => this.setState({ sort: e.target.value }),
+      chips: tags.map((t) => ({ name: t, on: t === s.tag ? 'true' : 'false', bg: t === s.tag ? '#111111' : '#FFFFFF', fg: t === s.tag ? '#FFD23F' : '#111111', pick: () => this.setState({ tag: t }) })),
+      empty: list.length === 0,
+      items: list.map((t) => ({ kind: t.kind, tag: t.tag, title: t.title, maker: t.maker, a: t.a, b: t.b, on: t.id === cur.id ? 'true' : 'false', ring: t.id === cur.id ? '#111111' : 'transparent', pick: () => this.setState({ pick: t.id }) })),
+      cur: cur
+    };
+  }
+}
+</script>
+</body>
+</html>

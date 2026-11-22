@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mixtape Mode: my tapes</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600&family=Gochi+Hand&family=Permanent+Marker&family=Rock+Salt&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#111111}a:hover{color:#D6246E}
+@keyframes mm-spin{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+<div style="min-height: 100vh; background-color: #FFF4DC; background-image: radial-gradient(#EFCB9E 1.3px, transparent 1.5px); background-size: 14px 14px; font-family: 'Space Grotesk', sans-serif; color: #111111">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 32px; background: #FFD23F; border-bottom: 4px solid #111111">
+    <div style="display: flex; align-items: center; gap: 12px">
+      <span style="font-family: 'Bungee', sans-serif; font-size: 28px; letter-spacing: 1px">MIXTAPE MODE</span>
+      <span style="font-family: 'Permanent Marker', cursive; font-size: 15px; background: #FF3D7F; border: 3px solid #111111; border-radius: 8px; padding: 2px 10px; transform: rotate(-4deg)">beta</span>
+    </div>
+    <nav style="display: flex; gap: 20px; font-weight: 700; font-size: 16px">
+      <a href="#" style="text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 4px">My tapes</a>
+      <a href="Main.dc.html" style="text-decoration: none">Make a tape</a>
+      <a href="Templates.dc.html" style="text-decoration: none">Templates</a>
+      <a href="Gallery.dc.html" style="text-decoration: none">Gallery</a>
+    </nav>
+  </header>
+  <main style="max-width: 1280px; margin: 0 auto; padding: 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <h1 style="margin: 0; font-family: 'Bungee', sans-serif; font-size: 44px; line-height: 1.05">My tapes</h1>
+        <p style="margin: 0; font-size: 18px">Pull one off the shelf.</p>
+      </div>
+      <div role="tablist" aria-label="Which tapes" style="display: flex; gap: 10px">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="2">
+          <button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="min-height: 48px; padding: 0 20px; border: 3px solid #111111; border-radius: 999px; background: {{t.bg}}; color: {{t.fg}}; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px; cursor: pointer">{{t.name}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+      <div style="flex: 1 1 560px; min-width: 0; box-sizing: border-box; background-color: #2EC4F1; background-image: radial-gradient(rgba(255,255,255,0.55) 2px, transparent 2.3px); background-size: 12px 12px; border: 4px solid #111111; border-radius: 20px; box-shadow: 10px 10px 0 #111111; padding: 28px 28px 0; overflow: hidden">
+        <div style="display: flex; flex-direction: column; gap: 6px; max-width: 600px">
+          <sc-for list="{{tapes}}" as="t" hint-placeholder-count="7">
+            <button type="button" onClick="{{t.pick}}" aria-pressed="{{t.on}}" aria-label="{{t.title}}" style="display: flex; align-items: stretch; width: 100%; height: 54px; padding: 0; box-sizing: border-box; border: 3px solid #111111; border-radius: 4px; background: {{t.spine}}; cursor: pointer; overflow: hidden; transform: {{t.tf}}; box-shadow: {{t.shadow}}; transition: transform 160ms ease">
+              <span style="flex: 0 0 64px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 3px solid #111111; background: {{t.band}}; font-family: 'Bungee', sans-serif; font-size: 11px; line-height: 1.1; color: #111111">C-60</span>
+              <span style="flex: 1 1 auto; min-width: 0; display: flex; align-items: center; padding: 0 14px; font-family: '{{t.font}}', cursive; font-size: {{t.size}}; color: {{t.ink}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.title}}</span>
+              <span style="flex: 0 0 40px; display: flex; align-items: center; justify-content: center; border-left: 3px solid #111111; background: #FFFDF5; font-family: 'Bungee', sans-serif; font-size: 13px; color: #111111">{{t.mark}}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div aria-hidden="true" style="height: 22px; margin: 18px -28px 0; border-top: 4px solid #111111; background: #FF3D7F"></div>
+      </div>
+
+      <div style="flex: 1 1 420px; min-width: 0; box-sizing: border-box; background: #FFFDF5; border: 4px solid #111111; border-radius: 20px; box-shadow: 8px 8px 0 #111111; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+        <div style="width: 447px; height: 288px; max-width: 100%; position: relative; overflow: hidden">
+          <div style="position: absolute; left: 0; top: 0; transform: scale(1.2); transform-origin: top left">
+            <dc-import name="Cassette" shell="{{cur.shell}}" clear="{{cur.clear}}" reel-color="{{cur.reel}}" label-style="{{cur.label}}" label-text="{{cur.title}}" font="{{cur.font}}" ink="{{cur.ink}}" side="A" spinning="{{false}}" strokes="{{none}}" hint-size="372px,240px"></dc-import>
+          </div>
+        </div>
+        <h2 style="margin: 0; font-family: 'Bungee', sans-serif; font-size: 26px; line-height: 1.1">{{cur.title}}</h2>
+        <p style="margin: 0; font-size: 16px; line-height: 1.5">{{cur.meta}}</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px">
+          <a href="Player.dc.html" style="display: flex; align-items: center; min-height: 52px; padding: 0 24px; border: 3px solid #111111; border-radius: 999px; background: #FF3D7F; box-shadow: 4px 4px 0 #111111; font-family: 'Bungee', sans-serif; font-size: 16px; color: #111111; text-decoration: none">Play</a>
+          <a href="Main.dc.html" style="display: flex; align-items: center; min-height: 52px; padding: 0 22px; border: 3px solid #111111; border-radius: 999px; background: #FFFDF5; font-weight: 700; font-size: 16px; color: #111111; text-decoration: none">Edit the tape</a>
+          <button type="button" style="min-height: 52px; padding: 0 22px; border: 3px solid #111111; border-radius: 999px; background: #FFD23F; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px; color: #111111; cursor: pointer">Copy the link</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pick: 0, tab: 'made' };
+  }
+  renderVals() {
+    const s = this.state;
+    const stripes = 'linear-gradient(90deg, #E63946 0 33%, #FFD23F 33% 66%, #2EC4F1 66% 100%)';
+    const made = [
+      { title: 'Kitchen Dance Party', spine: '#FFFDF5', band: stripes, font: 'Permanent Marker', size: '22px', ink: '#111111', shell: 'rgba(80,220,140,0.42)', clear: true, reel: '#FF3D7F', label: 'strip', meta: '8 songs, 4 a side. Sent to 2 people. J-card sealed until Side A ends.' },
+      { title: 'Long Drive North', spine: '#2EC4F1', band: '#FFFDF5', font: 'Rock Salt', size: '16px', ink: '#111111', shell: '#1E1E24', clear: false, reel: '#FF3D7F', label: 'lined', meta: '10 songs, 5 a side. Not sent yet.' },
+      { title: 'Sunday Slow Morning', spine: '#FFD23F', band: '#FF3D7F', font: 'Caveat', size: '28px', ink: '#111111', shell: '#FFD23F', clear: false, reel: '#F5F5F5', label: 'tape', meta: '6 songs, 3 a side. Sent to 1 person. J-card open.' },
+      { title: 'Basement Show Tape', spine: '#111111', band: '#FFD23F', font: 'Permanent Marker', size: '22px', ink: '#FFFDF5', shell: 'rgba(40,40,52,0.55)', clear: true, reel: '#FFD23F', label: 'retail', meta: '12 songs, 6 a side. Sent to 4 people.' },
+      { title: 'late night bus', spine: '#FFFDF5', band: stripes, font: 'Gochi Hand', size: '24px', ink: '#1D4ED8', shell: 'rgba(60,200,235,0.40)', clear: true, reel: '#F5F5F5', label: 'strip', meta: '8 songs, 4 a side. Not sent yet.' },
+      { title: 'Summer Windows Down', spine: '#FF3D7F', band: '#FFFDF5', font: 'Permanent Marker', size: '22px', ink: '#111111', shell: '#FF3D7F', clear: false, reel: '#F5F5F5', label: 'lined', meta: '8 songs, 4 a side. Sent to 3 people. J-card open.' },
+      { title: 'Rainy Day Side Quest', spine: '#9BE564', band: '#FFFDF5', font: 'Caveat', size: '28px', ink: '#111111', shell: 'rgba(240,244,250,0.38)', clear: true, reel: '#8A8A96', label: 'tape', meta: '6 songs, 3 a side. Sent to 1 person.' }
+    ];
+    const sent = [
+      { title: 'From Jordan: Gym Tape', spine: '#E63946', band: '#FFFDF5', font: 'Rock Salt', size: '16px', ink: '#FFFDF5', shell: '#E63946', clear: false, reel: '#F5F5F5', label: 'retail', meta: '8 songs, 4 a side. Still sealed.' },
+      { title: 'From Alex: Old Favourites', spine: '#FFFDF5', band: stripes, font: 'Caveat', size: '28px', ink: '#D6246E', shell: 'rgba(80,220,140,0.42)', clear: true, reel: '#FFD23F', label: 'lined', meta: '10 songs, 5 a side. J-card open.' }
+    ];
+    const list = s.tab === 'made' ? made : sent;
+    const idx = Math.min(s.pick, list.length - 1);
+    const tilts = ['-0.6deg', '0.4deg', '-0.2deg', '0.7deg', '-0.5deg', '0.3deg', '-0.3deg'];
+    return {
+      tabs: [{ id: 'made', name: 'Made by me' }, { id: 'sent', name: 'Sent to me' }].map((t) => ({ name: t.name, on: t.id === s.tab ? 'true' : 'false', bg: t.id === s.tab ? '#111111' : '#FFFDF5', fg: t.id === s.tab ? '#FFD23F' : '#111111', pick: () => this.setState({ tab: t.id, pick: 0 }) })),
+      tapes: list.map((t, i) => ({
+        title: t.title, spine: t.spine, band: t.band, font: t.font, size: t.size, ink: t.ink,
+        mark: i === idx ? 'A' : '',
+        on: i === idx ? 'true' : 'false',
+        tf: i === idx ? 'translateX(36px) rotate(0deg)' : 'rotate(' + tilts[i % tilts.length] + ')',
+        shadow: i === idx ? '6px 6px 0 #111111' : 'none',
+        pick: () => this.setState({ pick: i })
+      })),
+      cur: list[idx],
+      none: []
+    };
+  }
+}
+</script>
+</body>
+</html>

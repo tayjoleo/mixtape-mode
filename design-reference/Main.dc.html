@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mixtape Mode: make a tape</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600&family=Gochi+Hand&family=Permanent+Marker&family=Rock+Salt&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#111111}a:hover{color:#D6246E}
+@keyframes mm-spin{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+<div style="min-height: 100vh; background-color: #FFF4DC; background-image: radial-gradient(#EFCB9E 1.3px, transparent 1.5px); background-size: 14px 14px; font-family: 'Space Grotesk', sans-serif; color: #111111">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 32px; background: #FFD23F; border-bottom: 4px solid #111111">
+    <div style="display: flex; align-items: center; gap: 12px">
+      <span style="font-family: 'Bungee', sans-serif; font-size: 28px; letter-spacing: 1px">MIXTAPE MODE</span>
+      <span style="font-family: 'Permanent Marker', cursive; font-size: 15px; background: #FF3D7F; border: 3px solid #111111; border-radius: 8px; padding: 2px 10px; transform: rotate(-4deg)">beta</span>
+    </div>
+    <nav style="display: flex; gap: 20px; font-weight: 700; font-size: 16px">
+      <a href="Shelf.dc.html" style="text-decoration: none">My tapes</a>
+      <a href="#" style="text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 4px">Make a tape</a>
+      <a href="Templates.dc.html" style="text-decoration: none">Templates</a>
+      <a href="Gallery.dc.html" style="text-decoration: none">Gallery</a>
+    </nav>
+  </header>
+  <main style="max-width: 1280px; margin: 0 auto; padding: 32px; box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+    <section style="flex: 1 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+      <h1 style="margin: 0; font-family: 'Bungee', sans-serif; font-size: 44px; line-height: 1.05">Make a tape</h1>
+      <p style="margin: 0; font-size: 18px; line-height: 1.5; max-width: 520px">Decorate the outside however you want. The songs stay a surprise until they flip open the J-card.</p>
+      <div style="background-color: #2EC4F1; background-image: radial-gradient(rgba(255,255,255,0.55) 2px, transparent 2.3px); background-size: 12px 12px; border: 4px solid #111111; border-radius: 20px; box-shadow: 10px 10px 0 #111111; padding: 44px 24px; display: flex; justify-content: center; overflow: hidden">
+        <div style="width: 521px; height: 336px; max-width: 100%; position: relative">
+          <div style="position: absolute; left: 0; top: 0; transform: scale(1.4); transform-origin: top left">
+            <dc-import name="Cassette" shell="{{shell}}" label-style="{{label}}" label-text="{{title}}" font="{{font}}" ink="{{ink}}" side="{{side}}" spinning="{{spin}}" clear="{{clear}}" reel-color="{{reel}}" strokes="{{allStrokes}}" hint-size="372px,240px"></dc-import>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+        <sc-for list="{{sides}}" as="s" hint-placeholder-count="2">
+          <button type="button" onClick="{{s.pick}}" style="min-height: 48px; padding: 0 20px; border: 3px solid #111111; border-radius: 999px; background: {{s.bg}}; color: {{s.fg}}; font-family: 'Bungee', sans-serif; font-size: 16px; cursor: pointer">Side {{s.id}}</button>
+        </sc-for>
+        <button type="button" onClick="{{toggleSpin}}" style="min-height: 48px; padding: 0 20px; border: 3px solid #111111; border-radius: 999px; background: #FFFDF5; color: #111111; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 4px 4px 0 #111111">{{spinLabel}}</button>
+      </div>
+    </section>
+
+    <section style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+      <div style="background: #FFFDF5; border: 4px solid #111111; border-radius: 20px; box-shadow: 8px 8px 0 #111111; padding: 22px 24px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; align-items: center; gap: 12px">
+          <span style="font-family: 'Bungee', sans-serif; font-size: 15px; background: #FF3D7F; border: 3px solid #111111; border-radius: 10px; padding: 4px 10px">01</span>
+          <h2 style="margin: 0; font-family: 'Bungee', sans-serif; font-size: 22px">Shell</h2>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 16px">
+          <sc-for list="{{shells}}" as="c" hint-placeholder-count="6">
+            <button type="button" onClick="{{c.pick}}" aria-label="{{c.name}}" style="display: flex; flex-direction: column; align-items: center; gap: 8px; background: none; border: none; padding: 4px; cursor: pointer; font-family: 'Space Grotesk', sans-serif; color: #111111">
+              <span style="display: block; width: 48px; height: 48px; border-radius: 50%; border: 3px solid #111111; box-sizing: border-box; background: {{c.v}}; box-shadow: {{c.ring}}"></span>
+              <span style="font-size: 13px; font-weight: 500">{{c.name}}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span style="font-weight: 700; font-size: 15px">Reels</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px">
+            <sc-for list="{{reels}}" as="r" hint-placeholder-count="4">
+              <button type="button" onClick="{{r.pick}}" aria-label="{{r.name}}" style="width: 44px; height: 44px; border-radius: 50%; border: 3px solid #111111; background: {{r.v}}; box-shadow: {{r.ring}}; cursor: pointer; padding: 0"></button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: #FFFDF5; border: 4px solid #111111; border-radius: 20px; box-shadow: 8px 8px 0 #111111; padding: 22px 24px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; align-items: center; gap: 12px">
+          <span style="font-family: 'Bungee', sans-serif; font-size: 15px; background: #FFD23F; border: 3px solid #111111; border-radius: 10px; padding: 4px 10px">02</span>
+          <h2 style="margin: 0; font-family: 'Bungee', sans-serif; font-size: 22px">Sticker</h2>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px">
+          <sc-for list="{{labels}}" as="l" hint-placeholder-count="3">
+            <button type="button" onClick="{{l.pick}}" style="min-height: 48px; padding: 0 18px; border: 3px solid #111111; border-radius: 999px; background: {{l.bg}}; color: {{l.fg}}; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; cursor: pointer">{{l.name}}</button>
+          </sc-for>
+        </div>
+        <a href="Templates.dc.html" style="align-self: flex-start; font-weight: 700; font-size: 15px; text-underline-offset: 3px">Or upload your own label art</a>
+      </div>
+
+      <div style="background: #FFFDF5; border: 4px solid #111111; border-radius: 20px; box-shadow: 8px 8px 0 #111111; padding: 22px 24px; display: flex; flex-direction: column; gap: 18px">
+        <div style="display: flex; align-items: center; gap: 12px">
+          <span style="font-family: 'Bungee', sans-serif; font-size: 15px; background: #2EC4F1; border: 3px solid #111111; border-radius: 10px; padding: 4px 10px">03</span>
+          <h2 style="margin: 0; font-family: 'Bungee', sans-serif; font-size: 22px">Writing</h2>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="mm-title" style="font-weight: 700; font-size: 15px">What goes on the label</label>
+          <input id="mm-title" type="text" value="{{title}}" onChange="{{onTitle}}" style="min-height: 48px; padding: 0 14px; border: 3px solid #111111; border-radius: 12px; font-family: 'Space Grotesk', sans-serif; font-size: 17px; background: #FFFFFF; color: #111111; box-sizing: border-box; width: 100%">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span style="font-weight: 700; font-size: 15px">Handwriting</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            <sc-for list="{{fonts}}" as="f" hint-placeholder-count="4">
+              <button type="button" onClick="{{f.pick}}" aria-label="{{f.name}}" style="min-height: 52px; padding: 0 16px; border: 3px solid #111111; border-radius: 14px; background: {{f.bg}}; color: {{f.fg}}; font-family: '{{f.name}}', cursive; font-size: 19px; cursor: pointer">Mixtape</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span style="font-weight: 700; font-size: 15px">Ink</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px">
+            <sc-for list="{{inks}}" as="k" hint-placeholder-count="4">
+              <button type="button" onClick="{{k.pick}}" aria-label="{{k.name}}" style="width: 44px; height: 44px; border-radius: 50%; border: 3px solid #111111; background: {{k.v}}; box-shadow: {{k.ring}}; cursor: pointer; padding: 0"></button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap">
+            <span style="font-weight: 700; font-size: 15px">Doodle on it</span>
+            <button type="button" onClick="{{clear}}" style="min-height: 44px; padding: 0 14px; border: 3px solid #111111; border-radius: 999px; background: #FFFDF5; color: #111111; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer">Clear doodles</button>
+          </div>
+          <svg viewBox="0 0 300 80" role="img" aria-label="Drawing pad for doodles on the label" onPointerDown="{{down}}" onPointerMove="{{move}}" onPointerUp="{{up}}" onPointerLeave="{{up}}" style="display: block; width: 100%; max-width: 440px; aspect-ratio: 300 / 80; background: #FFFFFF; border: 3px dashed #111111; border-radius: 12px; box-sizing: border-box; touch-action: none; cursor: crosshair">
+            <sc-if value="{{isEmpty}}" hint-placeholder-val="{{true}}">
+              <text x="150" y="46" style="text-anchor: middle; font-family: 'Gochi Hand', cursive; font-size: 18px; fill: #6B6B6B">draw hearts, stars, whatever</text>
+            </sc-if>
+            <sc-for list="{{padStrokes}}" as="p" hint-placeholder-count="0">
+              <path d="{{p.d}}" style="fill: none; stroke: {{ink}}; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round"></path>
+            </sc-for>
+          </svg>
+        </div>
+      </div>
+
+      <div style="background: #FFFDF5; border: 4px solid #111111; border-radius: 20px; box-shadow: 8px 8px 0 #111111; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px">
+        <div style="display: flex; align-items: center; gap: 12px">
+          <span style="font-family: 'Bungee', sans-serif; font-size: 15px; background: #9BE564; border: 3px solid #111111; border-radius: 10px; padding: 4px 10px">04</span>
+          <h2 style="margin: 0; font-family: 'Bungee', sans-serif; font-size: 22px">J-card</h2>
+        </div>
+        <label style="display: flex; align-items: center; gap: 12px; min-height: 44px; font-weight: 700; font-size: 16px; cursor: pointer">
+          <input type="checkbox" checked="{{sealed}}" onChange="{{toggleSeal}}" style="width: 24px; height: 24px; accent-color: #D6246E; margin: 0">
+          Seal the J-card until Side A ends
+        </label>
+        <p style="margin: 0; font-size: 15px; line-height: 1.5">Listeners can always peek. The tracklist and the Spotify credits live on the inside fold, one tap away.</p>
+        <a href="JCard.dc.html" style="align-self: flex-start; display: flex; align-items: center; min-height: 48px; padding: 0 20px; border: 3px solid #111111; border-radius: 999px; background: #FFD23F; color: #111111; font-weight: 700; font-size: 16px; text-decoration: none; box-shadow: 4px 4px 0 #111111">Design the J-card</a>
+      </div>
+
+      <div style="background: #FFFDF5; border: 4px solid #111111; border-radius: 20px; box-shadow: 8px 8px 0 #111111; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px">
+        <div style="display: flex; align-items: center; gap: 12px">
+          <span style="font-family: 'Bungee', sans-serif; font-size: 15px; background: #FF3D7F; border: 3px solid #111111; border-radius: 10px; padding: 4px 10px">05</span>
+          <h2 style="margin: 0; font-family: 'Bungee', sans-serif; font-size: 22px">Songs</h2>
+        </div>
+        <p style="margin: 0; font-size: 15px; line-height: 1.5">8 songs, 4 a side. Only you see this list until they open the J-card.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px">
+          <span style="font-family: 'Bungee', sans-serif; font-size: 14px; border: 3px solid #111111; border-radius: 10px; padding: 6px 12px; background: #FFFFFF">Side A: 4 songs</span>
+          <span style="font-family: 'Bungee', sans-serif; font-size: 14px; border: 3px solid #111111; border-radius: 10px; padding: 6px 12px; background: #FFFFFF">Side B: 4 songs</span>
+        </div>
+        <button type="button" style="align-self: flex-start; min-height: 48px; padding: 0 20px; border: 3px solid #111111; border-radius: 999px; background: #FFFDF5; color: #111111; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px; cursor: pointer">Add songs from Spotify</button>
+      </div>
+
+      <a href="Player.dc.html" style="display: flex; align-items: center; justify-content: center; min-height: 68px; background: #FF3D7F; border: 4px solid #111111; border-radius: 18px; box-shadow: 8px 8px 0 #111111; font-family: 'Bungee', sans-serif; font-size: 22px; text-decoration: none; color: #111111">Make the tape</a>
+      <p style="margin: 0; font-size: 14px; text-align: center">You get a link to send. They press play on your page.</p>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1250}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { shell: 0, reel: '#FF3D7F', label: 'strip', title: 'Kitchen Dance Party', font: 'Permanent Marker', ink: '#111111', strokes: [], cur: null, side: 'A', spin: false, sealed: true };
+  }
+  pt(e) {
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = Math.max(0, Math.min(300, Math.round((e.clientX - r.left) / r.width * 300)));
+    const y = Math.max(0, Math.min(80, Math.round((e.clientY - r.top) / r.height * 80)));
+    return x + ' ' + y;
+  }
+  renderVals() {
+    const s = this.state;
+    const ring = '0 0 0 3px #FFFDF5, 0 0 0 6px #111111';
+    const shells = [
+      { name: 'Clear green', v: 'rgba(80,220,140,0.42)', clear: true },
+      { name: 'Clear cyan', v: 'rgba(60,200,235,0.40)', clear: true },
+      { name: 'Crystal', v: 'rgba(240,244,250,0.38)', clear: true },
+      { name: 'Clear smoke', v: 'rgba(40,40,52,0.55)', clear: true },
+      { name: 'Hot pink', v: '#FF3D7F', clear: false },
+      { name: 'Sunshine', v: '#FFD23F', clear: false },
+      { name: 'Lime', v: '#9BE564', clear: false },
+      { name: 'Jet black', v: '#1E1E24', clear: false }
+    ];
+    const reels = [
+      { name: 'White reels', v: '#F5F5F5' },
+      { name: 'Pink reels', v: '#FF3D7F' },
+      { name: 'Yellow reels', v: '#FFD23F' },
+      { name: 'Grey reels', v: '#8A8A96' }
+    ];
+    const labels = [
+      { id: 'strip', name: 'Slim stripe' },
+      { id: 'lined', name: 'Lined' },
+      { id: 'tape', name: 'Masking tape' },
+      { id: 'retail', name: 'Retail' }
+    ];
+    const fonts = ['Permanent Marker', 'Caveat', 'Rock Salt', 'Gochi Hand'];
+    const inks = [
+      { name: 'Black ink', v: '#111111' },
+      { name: 'Red ink', v: '#E63946' },
+      { name: 'Blue ink', v: '#1D4ED8' },
+      { name: 'Pink ink', v: '#D6246E' }
+    ];
+    const all = s.cur ? s.strokes.concat([s.cur]) : s.strokes;
+    return {
+      shell: shells[s.shell].v,
+      clear: shells[s.shell].clear,
+      reel: s.reel,
+      reels: reels.map((r) => ({ name: r.name, v: r.v, ring: r.v === s.reel ? ring : 'none', pick: () => this.setState({ reel: r.v }) })),
+      label: s.label,
+      title: s.title,
+      font: s.font,
+      ink: s.ink,
+      side: s.side,
+      spin: s.spin,
+      sealed: s.sealed,
+      allStrokes: all,
+      padStrokes: all.map((d) => ({ d: d })),
+      isEmpty: all.length === 0,
+      spinLabel: s.spin ? 'Pause the reels' : 'Play the reels',
+      shells: shells.map((c, i) => ({ name: c.name, v: c.v, ring: i === s.shell ? ring : 'none', pick: () => this.setState({ shell: i }) })),
+      labels: labels.map((l) => ({ name: l.name, bg: l.id === s.label ? '#111111' : '#FFFDF5', fg: l.id === s.label ? '#FFD23F' : '#111111', pick: () => this.setState({ label: l.id }) })),
+      fonts: fonts.map((f) => ({ name: f, bg: f === s.font ? '#111111' : '#FFFDF5', fg: f === s.font ? '#FFD23F' : '#111111', pick: () => this.setState({ font: f }) })),
+      inks: inks.map((k) => ({ name: k.name, v: k.v, ring: k.v === s.ink ? ring : 'none', pick: () => this.setState({ ink: k.v }) })),
+      sides: ['A', 'B'].map((id) => ({ id: id, bg: id === s.side ? '#111111' : '#FFFDF5', fg: id === s.side ? '#FFD23F' : '#111111', pick: () => this.setState({ side: id }) })),
+      toggleSpin: () => this.setState({ spin: !s.spin }),
+      toggleSeal: () => this.setState({ sealed: !s.sealed }),
+      onTitle: (e) => this.setState({ title: e.target.value }),
+      clear: () => this.setState({ strokes: [], cur: null }),
+      down: (e) => {
+        const p = this.pt(e);
+        if (e.currentTarget.setPointerCapture) { e.currentTarget.setPointerCapture(e.pointerId); }
+        this.setState({ cur: 'M' + p + ' L' + p });
+      },
+      move: (e) => {
+        if (this.state.cur === null) { return; }
+        const p = this.pt(e);
+        this.setState((st) => ({ cur: st.cur === null ? null : st.cur + ' L' + p }));
+      },
+      up: () => {
+        if (this.state.cur === null) { return; }
+        this.setState((st) => ({ strokes: st.cur ? st.strokes.concat([st.cur]) : st.strokes, cur: null }));
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

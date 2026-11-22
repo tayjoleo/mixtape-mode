@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mixtape Mode: listening</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600&family=Gochi+Hand&family=Permanent+Marker&family=Rock+Salt&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#111111}a:hover{color:#D6246E}
+@keyframes mm-spin{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; background-color: #FFF4DC; background-image: radial-gradient(#EFCB9E 1.3px, transparent 1.5px); background-size: 14px 14px; font-family: 'Space Grotesk', sans-serif; color: #111111">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 22px 22px 6px">
+    <span style="font-family: 'Bungee', sans-serif; font-size: 15px; letter-spacing: 1px">MIXTAPE MODE</span>
+    <span style="font-family: 'Caveat', cursive; font-size: 24px">from Taylor</span>
+  </div>
+  <h1 style="margin: 6px 22px 18px; font-family: 'Bungee', sans-serif; font-size: 26px; line-height: 1.1; text-align: center">Kitchen Dance Party</h1>
+
+  <div style="width: 335px; height: 216px; margin: 0 auto; position: relative">
+    <div style="position: absolute; left: 0; top: 0; transform: scale(0.9); transform-origin: top left">
+      <dc-import name="Cassette" shell="{{shell}}" clear="{{clear}}" reel-color="#FF3D7F" label-style="strip" label-text="Kitchen Dance Party" font="Permanent Marker" ink="#111111" side="{{side}}" spinning="{{playing}}" strokes="{{doodles}}" hint-size="372px,240px"></dc-import>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 22px; padding: 0 22px; text-align: center">
+    <span style="font-family: 'Bungee', sans-serif; font-size: 19px">Side {{side}} · Track {{n}} of 4</span>
+    <span style="font-size: 14px; line-height: 1.4">Song names are hidden. They live inside the J-card.</span>
+  </div>
+
+  <div style="margin: 16px 40px 0">
+    <div style="height: 18px; box-sizing: border-box; border: 3px solid #111111; border-radius: 999px; background: #FFFFFF; overflow: hidden">
+      <div style="width: 38%; height: 100%; background: #FF3D7F"></div>
+    </div>
+    <div style="display: flex; justify-content: space-between; margin-top: 6px; font-size: 13px; font-weight: 700">
+      <span>1:24</span>
+      <span>3:41</span>
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 14px">
+    <button type="button" onClick="{{prev}}" aria-label="Rewind to the previous song" style="width: 60px; height: 60px; border-radius: 50%; border: 4px solid #111111; background: #FFFDF5; box-shadow: 4px 4px 0 #111111; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0">
+      <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" style="fill: none; stroke: #111111; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M11 6 L4 12 L11 18 Z"></path><path d="M20 6 L13 12 L20 18 Z"></path></svg>
+    </button>
+    <button type="button" onClick="{{toggle}}" aria-label="{{playLabel}}" style="width: 82px; height: 82px; border-radius: 50%; border: 4px solid #111111; background: #FF3D7F; box-shadow: 6px 6px 0 #111111; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0">
+      <sc-if value="{{playing}}" hint-placeholder-val="{{true}}">
+        <svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true" style="fill: none; stroke: #111111; stroke-width: 3.5; stroke-linecap: round"><path d="M8 5 V19"></path><path d="M16 5 V19"></path></svg>
+      </sc-if>
+      <sc-if value="{{paused}}" hint-placeholder-val="{{false}}">
+        <svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true" style="fill: #111111; stroke: #111111; stroke-width: 2; stroke-linejoin: round"><path d="M8 5 L19 12 L8 19 Z"></path></svg>
+      </sc-if>
+    </button>
+    <button type="button" onClick="{{next}}" aria-label="Fast forward to the next song" style="width: 60px; height: 60px; border-radius: 50%; border: 4px solid #111111; background: #FFFDF5; box-shadow: 4px 4px 0 #111111; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0">
+      <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" style="fill: none; stroke: #111111; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"><path d="M4 6 L11 12 L4 18 Z"></path><path d="M13 6 L20 12 L13 18 Z"></path></svg>
+    </button>
+  </div>
+
+  <div style="display: flex; gap: 12px; margin: 26px 22px 0">
+    <button type="button" onClick="{{flip}}" style="flex: 1 1 0; min-height: 56px; border: 3px solid #111111; border-radius: 16px; background: #FFFDF5; box-shadow: 4px 4px 0 #111111; font-family: 'Bungee', sans-serif; font-size: 14px; color: #111111; cursor: pointer">Flip to Side {{other}}</button>
+    <button type="button" onClick="{{openCard}}" style="flex: 1 1 0; min-height: 56px; border: 3px solid #111111; border-radius: 16px; background: #FFD23F; box-shadow: 4px 4px 0 #111111; font-family: 'Bungee', sans-serif; font-size: 14px; color: #111111; cursor: pointer">Open the J-card</button>
+  </div>
+
+  <sc-if value="{{open}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; background: rgba(17,17,17,0.45)"></div>
+    <div role="dialog" aria-label="The J-card" style="position: absolute; left: 0; bottom: 0; width: 390px; height: 690px; box-sizing: border-box; background: #FFFDF5; border-top: 4px solid #111111; border-radius: 24px 24px 0 0; padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; align-items: center; justify-content: space-between">
+        <span style="font-family: 'Bungee', sans-serif; font-size: 20px">The J-card</span>
+        <button type="button" onClick="{{closeCard}}" aria-label="Close the J-card" style="width: 44px; height: 44px; border-radius: 50%; border: 3px solid #111111; background: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="fill: none; stroke: #111111; stroke-width: 3; stroke-linecap: round"><path d="M6 6 L18 18"></path><path d="M18 6 L6 18"></path></svg>
+        </button>
+      </div>
+
+      <sc-if value="{{locked}}" hint-placeholder-val="{{true}}">
+        <div style="flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; text-align: center; padding: 0 8px">
+          <span style="font-family: 'Bungee', sans-serif; font-size: 44px; color: #D6246E; border: 5px solid #D6246E; border-radius: 12px; padding: 4px 18px; transform: rotate(-8deg)">Sealed</span>
+          <p style="margin: 0; font-size: 16px; line-height: 1.5">Taylor sealed this one until Side A ends. The full tracklist and Spotify credits are right inside, so you can peek whenever you want.</p>
+          <button type="button" onClick="{{peek}}" style="min-height: 52px; padding: 0 24px; border: 3px solid #111111; border-radius: 999px; background: #FFD23F; box-shadow: 4px 4px 0 #111111; font-family: 'Bungee', sans-serif; font-size: 15px; color: #111111; cursor: pointer">Peek anyway</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{unlocked}}" hint-placeholder-val="{{false}}">
+        <div style="flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Bungee', sans-serif; font-size: 14px; margin-top: 2px">Side A</span>
+          <sc-for list="{{sideA}}" as="t" hint-placeholder-count="4">
+            <div style="display: flex; gap: 12px; align-items: flex-start; padding: 6px 10px; border-radius: 10px; border: 3px solid {{t.border}}; background: {{t.bg}}">
+              <span style="font-family: 'Bungee', sans-serif; font-size: 14px; width: 18px; padding-top: 2px">{{t.n}}</span>
+              <div style="display: flex; flex-direction: column; gap: 1px; min-width: 0">
+                <span style="font-weight: 700; font-size: 15px">{{t.title}}</span>
+                <span style="font-size: 13px">{{t.artist}} · {{t.album}}</span>
+              </div>
+            </div>
+          </sc-for>
+          <span style="font-family: 'Bungee', sans-serif; font-size: 14px; margin-top: 8px">Side B</span>
+          <sc-for list="{{sideB}}" as="t" hint-placeholder-count="4">
+            <div style="display: flex; gap: 12px; align-items: flex-start; padding: 6px 10px; border-radius: 10px; border: 3px solid {{t.border}}; background: {{t.bg}}">
+              <span style="font-family: 'Bungee', sans-serif; font-size: 14px; width: 18px; padding-top: 2px">{{t.n}}</span>
+              <div style="display: flex; flex-direction: column; gap: 1px; min-width: 0">
+                <span style="font-weight: 700; font-size: 15px">{{t.title}}</span>
+                <span style="font-size: 13px">{{t.artist}} · {{t.album}}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; align-items: center; gap: 12px; border-top: 3px dashed #111111; padding-top: 12px">
+        <span style="flex: 0 0 auto; display: flex; align-items: center; justify-content: center; width: 112px; height: 36px; border: 2px dashed #6B6B6B; border-radius: 8px; font-size: 11px; color: #3A3A3A; text-align: center">[Spotify logo]</span>
+        <span style="font-size: 12px; line-height: 1.4">Plays through Spotify. Song, artist and album info provided by Spotify.</span>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"shell":{"editor":"color","default":"rgba(80,220,140,0.42)","options":["rgba(80,220,140,0.42)","rgba(60,200,235,0.40)","#FF3D7F","#FFD23F"]},"clear":{"editor":"boolean","default":true},"sealed":{"editor":"boolean","default":true},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { playing: true, side: 'A', idx: 1, open: false, peeked: false };
+  }
+  renderVals() {
+    const s = this.state;
+    const sealed = this.props.sealed ?? true;
+    const A = [
+      ["Hey Ya!", "OutKast", "Speakerboxxx/The Love Below"],
+      ["Dreams", "Fleetwood Mac", "Rumours"],
+      ["Midnight City", "M83", "Hurry Up, We're Dreaming"],
+      ["Doo Wop (That Thing)", "Ms. Lauryn Hill", "The Miseducation of Lauryn Hill"]
+    ];
+    const B = [
+      ["Just Like Heaven", "The Cure", "Kiss Me Kiss Me Kiss Me"],
+      ["Redbone", "Childish Gambino", "Awaken, My Love!"],
+      ["Dancing On My Own", "Robyn", "Body Talk Pt. 1"],
+      ["Ain't No Mountain High Enough", "Marvin Gaye & Tammi Terrell", "United"]
+    ];
+    const mark = (list, side) => list.map((t, i) => {
+      const on = side === s.side && i === s.idx;
+      return { n: i + 1, title: t[0], artist: t[1], album: t[2], bg: on ? '#FFD23F' : 'transparent', border: on ? '#111111' : 'transparent' };
+    });
+    const locked = sealed && !s.peeked && s.side === 'A';
+    return {
+      shell: this.props.shell ?? 'rgba(80,220,140,0.42)',
+      clear: this.props.clear ?? true,
+      playing: s.playing,
+      paused: !s.playing,
+      playLabel: s.playing ? 'Pause' : 'Play',
+      side: s.side,
+      other: s.side === 'A' ? 'B' : 'A',
+      n: s.idx + 1,
+      doodles: [
+        'M262 30 C262 20 276 20 276 30 C276 20 290 20 290 30 C290 42 276 50 276 58 C276 50 262 42 262 30',
+        'M12 74 Q120 62 250 74'
+      ],
+      sideA: mark(A, 'A'),
+      sideB: mark(B, 'B'),
+      open: s.open,
+      locked: locked,
+      unlocked: !locked,
+      toggle: () => this.setState({ playing: !s.playing }),
+      next: () => {
+        if (s.idx < 3) { this.setState({ idx: s.idx + 1 }); }
+        else if (s.side === 'A') { this.setState({ side: 'B', idx: 0 }); }
+      },
+      prev: () => { if (s.idx > 0) { this.setState({ idx: s.idx - 1 }); } },
+      flip: () => this.setState({ side: s.side === 'A' ? 'B' : 'A', idx: 0 }),
+      openCard: () => this.setState({ open: true }),
+      closeCard: () => this.setState({ open: false }),
+      peek: () => this.setState({ peeked: true })
+    };
+  }
+}
+</script>
+</body>
+</html>
