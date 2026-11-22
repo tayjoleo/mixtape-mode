@@ -6,6 +6,8 @@ For working on the app. Testers want [the README](../README.md) instead.
 - `docs/DECISIONS.md` records decisions the spec does not cover, including
   several places where the live Spotify API did not match the documentation.
 - `docs/GUEST-LIST.md` is the checklist for letting a new tester in.
+- `docs/DESIGN-REVIEW.md` is the brief for a design team: which visuals are
+  approved design and which are extrapolation.
 - `design-reference/` is the approved visual design. Reference, not code to import.
 
 ## Routes
