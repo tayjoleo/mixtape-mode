@@ -53,6 +53,9 @@
   flex-direction: column;
   gap: 6px;
   max-width: 600px;
+  /* Room for the selected spine to slide into. The rack clips its overflow,
+     so without this the far end of the chosen tape is cut off. */
+  padding-right: 34px;
 }
 
 .mm-shelf__edge {
@@ -173,4 +176,38 @@
     transform: none !important;
     transition: none;
   }
+}
+
+/* --- an empty shelf ------------------------------------------------------- */
+
+.mm-shelf__rack--empty {
+  flex: 1 1 100%;
+  max-width: 720px;
+  padding-top: 0;
+}
+
+.mm-shelf__nothing {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  /* Roughly the height of three spines, so the rack does not collapse to a
+     thin strip and look like something failed to load. */
+  min-height: 190px;
+  justify-content: center;
+  padding: 24px 4px;
+  max-width: 460px;
+}
+
+.mm-shelf__nothing-line {
+  margin: 0;
+  font-family: var(--mm-font-display);
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.mm-shelf__nothing-note {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
 }

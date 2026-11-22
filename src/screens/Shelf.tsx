@@ -116,17 +116,29 @@ export default function Shelf({ me, onLogin, onLogout }: Props) {
         aria-labelledby={'mm-tab-' + tab}
       >
         {shown.length === 0 ? (
-          <div className="mm-card mm-shelf__empty">
-            <p className="mm-lede">
-              {tab === 'made'
-                ? 'Your shelf is empty. Make a tape.'
-                : 'Nobody has sent you a tape yet. When someone does, opening their link puts it here.'}
-            </p>
-            {tab === 'made' ? (
-              <a className="mm-btn mm-btn--primary mm-btn--big" href="#/make">
-                Make a tape
-              </a>
-            ) : null}
+          /* An empty shelf is still a shelf. Keeping the rack means the page
+             reads as "nothing on it yet" rather than as a missing panel. */
+          <div className="mm-shelf__rack mm-shelf__rack--empty">
+            <div className="mm-shelf__nothing">
+              <p className="mm-shelf__nothing-line">
+                {tab === 'made' ? 'Your shelf is empty.' : 'Nothing sent to you yet.'}
+              </p>
+              <p className="mm-shelf__nothing-note">
+                {tab === 'made'
+                  ? 'Make a tape and it lands here, ready to send.'
+                  : 'When someone sends you a tape, opening their link puts it on this shelf.'}
+              </p>
+              {tab === 'made' ? (
+                <a className="mm-btn mm-btn--primary" href="#/make">
+                  Make a tape
+                </a>
+              ) : (
+                <a className="mm-btn mm-btn--sun" href="#/make">
+                  Make one of your own
+                </a>
+              )}
+            </div>
+            <div className="mm-shelf__edge" aria-hidden="true" />
           </div>
         ) : (
           <>
