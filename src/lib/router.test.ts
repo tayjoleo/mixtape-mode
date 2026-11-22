@@ -33,3 +33,26 @@ describe('parseRoute', () => {
     expect(parseRoute('#/gallery')).toEqual({ name: 'unknown', hash: '/gallery' });
   });
 });
+
+describe('the edit route', () => {
+  it('reads a maker route with a tape to edit', () => {
+    expect(parseRoute('#/make/N4IgbiBcCMA0IEso')).toEqual({
+      name: 'make',
+      payload: 'N4IgbiBcCMA0IEso',
+    });
+  });
+
+  it('keeps the plain maker route payload-free', () => {
+    expect(parseRoute('#/make')).toEqual({ name: 'make' });
+  });
+
+  it('treats an edit route with no payload as unknown', () => {
+    expect(parseRoute('#/make/')).toEqual({ name: 'unknown', hash: '/make/' });
+  });
+});
+
+describe('the check route', () => {
+  it('reads the diagnostics route', () => {
+    expect(parseRoute('#/check')).toEqual({ name: 'check' });
+  });
+});

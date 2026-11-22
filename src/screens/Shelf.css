@@ -1,0 +1,176 @@
+/* Ported from design-reference/Shelf.dc.html. */
+
+.mm-shelf__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.mm-shelf__top h1 {
+  margin: 0;
+  font-family: var(--mm-font-display);
+  font-size: 44px;
+  line-height: 1.05;
+}
+
+.mm-shelf__tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.mm-shelf {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.mm-shelf__empty {
+  flex: 1 1 100%;
+  align-items: flex-start;
+}
+
+/* --- the rack ------------------------------------------------------------- */
+
+.mm-shelf__rack {
+  flex: 1 1 520px;
+  min-width: 0;
+  box-sizing: border-box;
+  background-color: var(--mm-blue);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.55) 2px, transparent 2.3px);
+  background-size: 12px 12px;
+  border: var(--mm-border-thick) solid var(--mm-ink);
+  border-radius: var(--mm-radius-card);
+  box-shadow: var(--mm-shadow-card-lg);
+  padding: 26px 26px 0;
+  overflow: hidden;
+}
+
+.mm-shelf__spines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 600px;
+}
+
+.mm-shelf__edge {
+  height: 22px;
+  margin: 18px -26px 0;
+  border-top: var(--mm-border-thick) solid var(--mm-ink);
+  background: var(--mm-pink);
+}
+
+/* --- a spine -------------------------------------------------------------- */
+
+.mm-spine {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 54px;
+  padding: 0;
+  box-sizing: border-box;
+  border: var(--mm-border) solid var(--mm-ink);
+  border-radius: 4px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 160ms ease;
+}
+
+.mm-spine--out {
+  box-shadow: 6px 6px 0 var(--mm-ink);
+}
+
+.mm-spine__band {
+  flex: 0 0 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-right: var(--mm-border) solid var(--mm-ink);
+  font-family: var(--mm-font-display);
+  font-size: 11px;
+  line-height: 1.1;
+  color: var(--mm-ink);
+}
+
+.mm-spine__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  font-size: 22px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mm-spine__mark {
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: var(--mm-border) solid var(--mm-ink);
+  background: var(--mm-card);
+  font-family: var(--mm-font-display);
+  font-size: 13px;
+  color: var(--mm-ink);
+}
+
+/* --- the detail card ------------------------------------------------------ */
+
+.mm-shelf__detail {
+  flex: 1 1 420px;
+  min-width: 0;
+  max-width: none;
+}
+
+.mm-shelf__detail h2 {
+  margin: 0;
+  font-family: var(--mm-font-display);
+  font-size: 26px;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.mm-shelf__art {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+@media (max-width: 760px) {
+  .mm-shelf__top h1 {
+    font-size: 34px;
+  }
+
+  .mm-shelf__rack {
+    padding: 16px 16px 0;
+  }
+
+  .mm-shelf__edge {
+    margin: 14px -16px 0;
+  }
+
+  .mm-spine__title {
+    font-size: 18px;
+    padding: 0 10px;
+  }
+
+  .mm-spine__band {
+    flex-basis: 52px;
+  }
+}
+
+/*
+ * Reduced motion: spines do not lean or slide. The selected one is still
+ * obvious from its shadow and its mark.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .mm-spine {
+    transform: none !important;
+    transition: none;
+  }
+}

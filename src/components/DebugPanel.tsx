@@ -78,6 +78,7 @@ export default function DebugPanel() {
               <button type="button" onClick={clearDebug}>
                 Clear
               </button>
+              <a href="#/check">Checks</a>
             </div>
           </div>
 

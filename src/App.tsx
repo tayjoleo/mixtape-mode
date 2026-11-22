@@ -5,10 +5,12 @@ import { useAuth } from './hooks/useAuth';
 import { debugEnabled, logDebug } from './lib/debug';
 import { redactPageUrl } from './lib/redact';
 import { useRoute } from './lib/router';
-import { readTapeFromPayload } from './tape/encode';
+import { decodeTape, readTapeFromPayload } from './tape/encode';
+import { saveToShelf } from './lib/shelf';
 import ChewedUp from './screens/ChewedUp';
 import GoNoGo from './screens/GoNoGo';
 import Maker from './screens/Maker';
+import Shelf from './screens/Shelf';
 import NotOnGuestList from './screens/NotOnGuestList';
 import NotPremium from './screens/NotPremium';
 import Offline from './screens/Offline';
@@ -24,6 +26,12 @@ export default function App() {
   const route = useRoute();
   const showDebug = debugEnabled();
   const online = useOnline();
+
+  // Spec section 6: opening any tape link files it under "sent to me", unless
+  // it is already on the shelf as one you made.
+  useEffect(() => {
+    if (route.name === 'tape') saveToShelf(route.payload, 'received');
+  }, [route]);
 
   useEffect(() => {
     logDebug('app', 'App mounted', {
@@ -43,60 +51,90 @@ export default function App() {
   function body() {
     if (!import.meta.env.VITE_SPOTIFY_CLIENT_ID) return <NoClientId />;
 
+    const me = auth.status === 'logged-in' ? auth.me : null;
+
     // A tape is visible to anyone, logged in or not, so it is decoded and shown
     // before any of the auth states are considered. Spec section 6.
     if (route.name === 'tape') {
       const result = readTapeFromPayload(route.payload);
       if (!result.ok) return <ChewedUp reason={result.reason} />;
 
-      return (
-        <Player
-          tape={result.tape}
-          me={auth.status === 'logged-in' ? auth.me : null}
-          onLogin={auth.login}
-          onLogout={auth.logout}
-        />
-      );
+      return <Player tape={result.tape} me={me} onLogin={auth.login} onLogout={auth.logout} />;
     }
 
     if (!online) return <Offline />;
 
-    // The maker is reachable logged out: the decoration all works without
-    // Spotify, and only the song picker needs an account.
-    if (route.name === 'make') {
+    // Being turned away by Spotify is worth saying plainly, whichever screen
+    // you were heading for. The tape view above is the exception: a tape is
+    // still worth looking at even if you cannot play it.
+    if (auth.status === 'not-on-guest-list') return <NotOnGuestList onLogout={auth.logout} />;
+    if (auth.status === 'not-premium') return <NotPremium onLogout={auth.logout} />;
+
+    if (auth.status === 'loading') {
       return (
-        <Maker
-          me={auth.status === 'logged-in' ? auth.me : null}
-          onLogin={auth.login}
-          onLogout={auth.logout}
-        />
+        <AppShell>
+          <h1>One moment</h1>
+          <div className="mm-card">
+            <p className="mm-lede">Talking to Spotify...</p>
+          </div>
+        </AppShell>
       );
     }
 
-    switch (auth.status) {
-      case 'loading':
+    switch (route.name) {
+      // The maker is reachable logged out: all the decoration works without
+      // Spotify, and only the song picker needs an account.
+      case 'make': {
+        const editing = route.payload === undefined ? undefined : decodeTape(route.payload);
+        if (editing && !editing.ok) return <ChewedUp reason={editing.reason} />;
+
         return (
-          <AppShell>
-            <h1>One moment</h1>
-            <div className="mm-card">
-              <p className="mm-lede">Talking to Spotify...</p>
-            </div>
-          </AppShell>
+          <Maker me={me} onLogin={auth.login} onLogout={auth.logout} initial={editing?.tape} />
+        );
+      }
+
+      // Left over from Milestone 1, off the main path now but still the
+      // quickest way to see what the SDK and the API are doing.
+      case 'check':
+        return me ? (
+          <GoNoGo me={me} onLogout={auth.logout} />
+        ) : (
+          <SignedOut
+            heading="Checking the plumbing"
+            lede="Log in with Spotify to run the login, device and playback checks."
+            error={auth.status === 'logged-out' ? auth.error : undefined}
+            onLogin={auth.login}
+          />
         );
 
-      case 'not-on-guest-list':
-        return <NotOnGuestList onLogout={auth.logout} />;
+      case 'shelf':
+        return <Shelf me={me} onLogin={auth.login} onLogout={auth.logout} />;
 
-      case 'not-premium':
-        return <NotPremium onLogout={auth.logout} />;
-
-      case 'logged-in':
-        return <GoNoGo me={auth.me} onLogout={auth.logout} />;
-
-      case 'logged-out':
-        return <LoggedOut error={auth.error} onLogin={auth.login} />;
+      case 'unknown':
+        return <NotFound hash={route.hash} />;
     }
   }
+}
+
+function NotFound({ hash }: { hash: string }) {
+  return (
+    <AppShell>
+      <h1>Nothing here</h1>
+      <div className="mm-card">
+        <p className="mm-lede">
+          There is no page at <code>{hash}</code>.
+        </p>
+        <div className="mm-btn-row">
+          <a className="mm-btn mm-btn--sun" href="#/">
+            Go to my tapes
+          </a>
+          <a className="mm-btn" href="#/make">
+            Make a tape
+          </a>
+        </div>
+      </div>
+    </AppShell>
+  );
 }
 
 function useOnline(): boolean {
@@ -137,7 +175,17 @@ function NoClientId() {
   );
 }
 
-function LoggedOut({ error, onLogin }: { error?: string | undefined; onLogin: () => void }) {
+function SignedOut({
+  heading,
+  lede,
+  error,
+  onLogin,
+}: {
+  heading: string;
+  lede: string;
+  error?: string | undefined;
+  onLogin: () => void;
+}) {
   // Worth saying out loud here rather than at the moment of redirect, since it
   // is the single most likely local setup mistake.
   const redirectProblem =
@@ -147,12 +195,9 @@ function LoggedOut({ error, onLogin }: { error?: string | undefined; onLogin: ()
 
   return (
     <AppShell>
-      <h1>Milestone 1: go / no-go</h1>
+      <h1>{heading}</h1>
       <div className="mm-card">
-        <p className="mm-lede">
-          Log in with Spotify so we can check the login, the account, the player device and one
-          track playing.
-        </p>
+        <p className="mm-lede">{lede}</p>
         {error ? <p className="mm-note">{error}</p> : null}
         {redirectProblem ? <p className="mm-note">{redirectProblem}</p> : null}
         <div className="mm-btn-row">

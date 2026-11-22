@@ -18,13 +18,17 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 20px;
+  padding: 4px 20px;
   background: var(--mm-sunshine);
   border-bottom: var(--mm-border-thick) solid var(--mm-ink);
   flex: none;
 }
 
 .mm-player__home {
+  display: inline-flex;
+  align-items: center;
+  /* A real touch target, even though the bar itself is tight. */
+  min-height: var(--mm-tap);
   font-family: var(--mm-font-display);
   font-size: 15px;
   letter-spacing: 1px;

@@ -17,6 +17,18 @@ export default function AppShell({
 }) {
   return (
     <>
+      {/*
+        A button rather than an anchor: routing lives in the hash, so an
+        `href="#mm-main"` would navigate to a route that does not exist
+        instead of jumping down the page.
+      */}
+      <button
+        type="button"
+        className="mm-skip"
+        onClick={() => document.getElementById('mm-main')?.focus()}
+      >
+        Skip to the page
+      </button>
       <header className="mm-header">
         <div className="mm-wordmark">
           <span className="mm-wordmark__name">MIXTAPE MODE</span>
@@ -32,7 +44,9 @@ export default function AppShell({
           {right}
         </nav>
       </header>
-      <main className="mm-main">{children}</main>
+      <main className="mm-main" id="mm-main" tabIndex={-1}>
+        {children}
+      </main>
     </>
   );
 }

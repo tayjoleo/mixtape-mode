@@ -57,3 +57,34 @@ textarea {
     transition-duration: 0.001ms !important;
   }
 }
+
+/*
+ * Skip link. First thing in the tab order, invisible until focused, so a
+ * keyboard can get past the header without walking the whole nav.
+ */
+.mm-skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 12px 18px;
+  background: var(--mm-sunshine);
+  border: var(--mm-border) solid var(--mm-ink);
+  border-radius: 0 0 12px 0;
+  font-weight: 700;
+  font-family: var(--mm-font-body);
+  font-size: 15px;
+  color: var(--mm-ink);
+  cursor: pointer;
+}
+
+.mm-skip:focus {
+  left: 0;
+}
+
+/* Anything that reads as a control gets a real target on a touch screen. */
+button,
+[role='button'],
+a.mm-btn {
+  min-height: var(--mm-tap);
+}

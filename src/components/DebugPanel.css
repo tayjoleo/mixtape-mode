@@ -77,6 +77,14 @@
   gap: 8px;
 }
 
+.mm-debug__actions a,
+.mm-debug__actions button {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.mm-debug__actions a,
 .mm-debug__actions button {
   min-height: var(--mm-tap);
   padding: 0 12px;

@@ -5,6 +5,7 @@
  * The tape format stores ids because ids are what survive in a URL; this is
  * the one place that knows what each id looks like.
  */
+import { readableInk } from '../lib/colour';
 import type { FontId, InkId, InkPairId, ReelId, ShellId, StickerId } from './types';
 
 export type ShellLook = {
@@ -70,9 +71,17 @@ export const INK_PAIRS: Record<InkPairId, { name: string; a: string; b: string }
   'pink-black': { name: 'Pink + Black', a: '#FF48B0', b: '#1A1A1A' },
 };
 
+/** The rack a spine sits on, which a clear shell is seen through. */
+const RACK = { r: 0x2e, g: 0xc4, b: 0xf1 };
+
 /**
  * The spine on the shelf is derived from the tape rather than stored, so it can
  * never disagree with the cassette it belongs to. See docs/DECISIONS.md.
+ *
+ * Shell and ink are picked independently in the maker, so black ink on a jet
+ * black shell is a thing someone can make. The lettering keeps the tape's own
+ * ink whenever that is legible and switches to the paper colour when it is
+ * not, rather than shipping a spine nobody can read.
  */
 export function spineLook(shell: ShellId, sticker: StickerId, ink: InkId) {
   const stripes = 'linear-gradient(90deg, #E63946 0 33%, #FFD23F 33% 66%, #2EC4F1 66% 100%)';
@@ -83,9 +92,11 @@ export function spineLook(shell: ShellId, sticker: StickerId, ink: InkId) {
     retail: '#FFD23F',
   };
 
+  const background = SHELLS[shell].colour;
+
   return {
-    background: SHELLS[shell].colour,
+    background,
     band: bands[sticker],
-    ink: INKS[ink].colour,
+    ink: readableInk(background, INKS[ink].colour, RACK),
   };
 }

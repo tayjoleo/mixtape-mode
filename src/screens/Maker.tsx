@@ -28,22 +28,30 @@ import {
 } from '../tape/types';
 import './Maker.css';
 
-type Props = { me: Me | null; onLogin: () => void; onLogout: () => void };
+type Props = {
+  me: Me | null;
+  onLogin: () => void;
+  onLogout: () => void;
+  /** An existing tape to edit, from `#/make/<payload>`. */
+  initial?: Tape | undefined;
+};
 
-export default function Maker({ me, onLogin, onLogout }: Props) {
-  const [title, setTitle] = useState('');
-  const [from, setFrom] = useState(() => me?.display_name ?? '');
-  const [to, setTo] = useState('');
-  const [shell, setShell] = useState<ShellId>('clear-green');
-  const [reels, setReels] = useState<ReelId>('pink');
-  const [sticker, setSticker] = useState<StickerId>('strip');
-  const [font, setFont] = useState<FontId>('permanent-marker');
-  const [ink, setInk] = useState<InkId>('black');
-  const [doodles, setDoodles] = useState<string[]>([]);
-  const [sealed, setSealed] = useState(true);
-  const [inks, setInks] = useState<InkPairId>('pink-blue');
-  const [misregister, setMisregister] = useState(3);
-  const [sides, setSides] = useState<Sides>({ a: [], b: [] });
+export default function Maker({ me, onLogin, onLogout, initial }: Props) {
+  const [title, setTitle] = useState(initial?.title ?? '');
+  const [from, setFrom] = useState(initial?.from ?? me?.display_name ?? '');
+  const [to, setTo] = useState(initial?.to ?? '');
+  const [shell, setShell] = useState<ShellId>(initial?.shell ?? 'clear-green');
+  const [reels, setReels] = useState<ReelId>(initial?.reels ?? 'pink');
+  const [sticker, setSticker] = useState<StickerId>(initial?.sticker ?? 'strip');
+  const [font, setFont] = useState<FontId>(initial?.font ?? 'permanent-marker');
+  const [ink, setInk] = useState<InkId>(initial?.ink ?? 'black');
+  const [doodles, setDoodles] = useState<string[]>(initial ? [...initial.doodles] : []);
+  const [sealed, setSealed] = useState(initial?.sealed ?? true);
+  const [inks, setInks] = useState<InkPairId>(initial?.cover.inks ?? 'pink-blue');
+  const [misregister, setMisregister] = useState(initial?.cover.misregister ?? 3);
+  const [sides, setSides] = useState<Sides>(
+    initial ? { a: [...initial.sides.a], b: [...initial.sides.b] } : { a: [], b: [] },
+  );
   const [previewSide, setPreviewSide] = useState<'A' | 'B'>('A');
   const [spinning, setSpinning] = useState(false);
 
@@ -62,6 +70,7 @@ export default function Maker({ me, onLogin, onLogout }: Props) {
   const tape: Tape = useMemo(
     () =>
       emptyTape({
+        ...(initial ? { id: initial.id, createdAt: initial.createdAt } : {}),
         title,
         from,
         shell,
@@ -75,7 +84,22 @@ export default function Maker({ me, onLogin, onLogout }: Props) {
         sides: { a: sides.a, b: sides.b },
         ...(to.trim() === '' ? {} : { to }),
       }),
-    [title, from, to, shell, reels, sticker, font, ink, doodles, sealed, inks, misregister, sides],
+    [
+      initial,
+      title,
+      from,
+      to,
+      shell,
+      reels,
+      sticker,
+      font,
+      ink,
+      doodles,
+      sealed,
+      inks,
+      misregister,
+      sides,
+    ],
   );
 
   const canMake = sides.a.length > 0;
@@ -124,7 +148,7 @@ export default function Maker({ me, onLogin, onLogout }: Props) {
         ) : null
       }
     >
-      <h1>Make a tape</h1>
+      <h1>{initial ? 'Edit the tape' : 'Make a tape'}</h1>
       <p className="mm-lede">
         Decorate the outside however you want. The songs stay a surprise until they flip open the
         J-card.
