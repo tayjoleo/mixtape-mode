@@ -123,11 +123,17 @@ export function usePlayer(enabled: boolean) {
       });
 
       player.addListener('player_state_changed', (state) => {
-        logDebug('sdk', 'player_state_changed', {
-          paused: state?.paused,
-          position: state?.position,
-          uri: state?.track_window.current_track.uri,
-        });
+        logDebug(
+          'sdk',
+          'player_state_changed',
+          state === null
+            ? 'no state (another device has playback)'
+            : {
+                paused: state.paused,
+                position: state.position,
+                uri: state.track_window.current_track.uri,
+              },
+        );
         patch({ state });
       });
 
@@ -218,14 +224,50 @@ export function usePlayer(enabled: boolean) {
 
       await activate();
 
+      // Claim the device first.
+      //
+      // The SDK reporting `ready` only means the device exists, not that it is
+      // the account's active one. Shuffle and repeat are rejected with a 404
+      // "Device not found" on a device that is not active, which is what
+      // happens when a second deck has just replaced a first: arriving at a
+      // tape from the shelf disconnects one player and connects another, and
+      // the new device has nothing playing on it to apply a setting to.
+      try {
+        await transferPlayback(deviceId, false);
+      } catch (error) {
+        logDebug('error', 'Could not transfer playback to the deck', error);
+      }
+
+      // A mixtape must never shuffle. If these are refused we still play:
+      // better a tape that plays than one that refuses to start, and the retry
+      // below catches it once the device is definitely active.
+      let settingsApplied = true;
       try {
         await setShuffle(false, deviceId);
         await setRepeat('off', deviceId);
+      } catch (error) {
+        settingsApplied = false;
+        logDebug('error', 'Shuffle and repeat refused before playing', error);
+      }
+
+      try {
         await startPlayback({ deviceId, uris, position });
         patch({ autoplayBlocked: false, message: null });
       } catch (error) {
         logDebug('error', 'Could not start playback', error);
         patch({ message: 'Spotify would not start playback. The debug panel has the details.' });
+        return;
+      }
+
+      if (!settingsApplied) {
+        try {
+          await setShuffle(false, deviceId);
+          await setRepeat('off', deviceId);
+          logDebug('sdk', 'Shuffle and repeat set once playback had started');
+        } catch (error) {
+          // Worth knowing about: the tape may shuffle after the first track.
+          logDebug('error', 'Shuffle and repeat could not be set at all', error);
+        }
       }
     },
     [activate, patch, snapshot.deviceId],

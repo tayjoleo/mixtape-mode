@@ -18,6 +18,22 @@ export type DebugEntry = {
 const MAX_ENTRIES = 500;
 const DEBUG_FLAG_KEY = 'mm.debug';
 
+/**
+ * How much of one detail to keep.
+ *
+ * A single `GET /tracks/{id}` response is about 1,500 characters, and a full
+ * tape is twenty of them. Left whole they bury the SDK events and errors that
+ * the log exists to show. Errors and event payloads are far shorter than this,
+ * so nothing that matters gets cut.
+ */
+const MAX_DETAIL_CHARS = 400;
+
+function truncate(text: string): string {
+  if (text.length <= MAX_DETAIL_CHARS) return text;
+  const dropped = text.length - MAX_DETAIL_CHARS;
+  return text.slice(0, MAX_DETAIL_CHARS) + '... (+' + dropped + ' more characters)';
+}
+
 let entries: readonly DebugEntry[] = [];
 const listeners = new Set<() => void>();
 
@@ -27,15 +43,15 @@ const listeners = new Set<() => void>();
  */
 function describe(detail: unknown): string | undefined {
   if (detail === undefined) return undefined;
-  if (typeof detail === 'string') return detail;
+  if (typeof detail === 'string') return truncate(detail);
   if (detail instanceof Error) return `${detail.name}: ${detail.message}`;
   try {
     // Redact centrally, so no individual call site can forget. GET /me returns
     // the listener's email address, and this log exists to be pasted into a
     // bug report.
-    return JSON.stringify(redactObject(detail));
+    return truncate(JSON.stringify(redactObject(detail)));
   } catch {
-    return String(detail);
+    return truncate(String(detail));
   }
 }
 
