@@ -1,108 +1,110 @@
-import './App.css';
-import { currentRedirectUri, RedirectUriError } from './lib/urls';
+import { useEffect } from 'react';
+import AppShell from './components/AppShell';
+import DebugPanel from './components/DebugPanel';
+import { useAuth } from './hooks/useAuth';
+import { debugEnabled, logDebug } from './lib/debug';
+import GoNoGo from './screens/GoNoGo';
+import NotOnGuestList from './screens/NotOnGuestList';
+import './styles/ui.css';
 
-function redirectUriStatus(): { uri: string; ok: boolean; note: string } {
-  try {
-    const uri = currentRedirectUri();
-    return { uri, ok: true, note: 'Registered in the Spotify dashboard.' };
-  } catch (error) {
-    if (error instanceof RedirectUriError) {
-      return {
-        uri: window.location.origin + import.meta.env.BASE_URL,
-        ok: false,
-        note: error.message,
-      };
-    }
-    throw error;
-  }
-}
-
+/**
+ * Milestone 1 only: the go / no-go harness. Routing, the player, the maker and
+ * the shelf arrive in later milestones.
+ */
 export default function App() {
-  const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-  const redirect = redirectUriStatus();
+  const auth = useAuth();
+  const showDebug = debugEnabled();
+
+  useEffect(() => {
+    logDebug('app', 'App mounted', {
+      href: window.location.href,
+      base: import.meta.env.BASE_URL,
+      mode: import.meta.env.MODE,
+    });
+  }, []);
 
   return (
     <>
-      <header className="mm-header">
-        <div className="mm-wordmark">
-          <span className="mm-wordmark__name">MIXTAPE MODE</span>
-          <span className="mm-wordmark__beta">beta</span>
-        </div>
-        <nav className="mm-nav" aria-label="Main">
-          <a href="#/" aria-current="page">
-            My tapes
-          </a>
-          <a href="#/make">Make a tape</a>
-        </nav>
-      </header>
-
-      <main className="mm-main">
-        <h1>Milestone 0</h1>
-        <p className="mm-lede">
-          The scaffold is up: Vite, React, TypeScript, ESLint, Prettier, Vitest and the GitHub Pages
-          deploy. Nothing talks to Spotify yet. Check the numbers below against the Spotify
-          developer dashboard before we start Milestone 1.
-        </p>
-
-        <section className="mm-card" aria-labelledby="mm-setup">
-          <h2 id="mm-setup">What this build thinks it is</h2>
-          <dl className="mm-facts">
-            <dt>Origin</dt>
-            <dd>
-              <code>{window.location.origin}</code>
-            </dd>
-
-            <dt>Vite base</dt>
-            <dd>
-              <code>{import.meta.env.BASE_URL}</code>
-            </dd>
-
-            <dt>Redirect URI</dt>
-            <dd>
-              <code>{redirect.uri}</code>{' '}
-              <span className={redirect.ok ? 'mm-flag mm-flag--ok' : 'mm-flag mm-flag--bad'}>
-                {redirect.ok ? 'registered' : 'not registered'}
-              </span>
-              <br />
-              {redirect.note}
-            </dd>
-
-            <dt>Client ID</dt>
-            <dd>
-              {clientId ? (
-                <>
-                  <code>{clientId}</code> <span className="mm-flag mm-flag--ok">loaded</span>
-                </>
-              ) : (
-                <>
-                  <span className="mm-flag mm-flag--missing">not set</span> Add{' '}
-                  <code>VITE_SPOTIFY_CLIENT_ID</code> to <code>.env.local</code> for dev, and to the
-                  repository variables for the Pages build.
-                </>
-              )}
-            </dd>
-
-            <dt>Mode</dt>
-            <dd>
-              <code>{import.meta.env.MODE}</code>
-            </dd>
-          </dl>
-        </section>
-
-        <section className="mm-card" aria-labelledby="mm-next">
-          <h2 id="mm-next">Next up</h2>
-          <ol className="mm-milestones">
-            <li>
-              <strong>M1 go / no-go.</strong> PKCE login, the <code>/me</code> check, a Web Playback
-              SDK device reaching <code>ready</code>, and one hardcoded track playing on both URLs.
-            </li>
-            <li>
-              <strong>M2</strong> tape format, <strong>M3</strong> player, <strong>M4</strong>{' '}
-              maker, <strong>M5</strong> shelf and polish, <strong>M6</strong> friends test.
-            </li>
-          </ol>
-        </section>
-      </main>
+      {body()}
+      {showDebug ? <DebugPanel /> : null}
     </>
+  );
+
+  function body() {
+    if (!import.meta.env.VITE_SPOTIFY_CLIENT_ID) {
+      return (
+        <AppShell>
+          <h1>No Client ID</h1>
+          <div className="mm-card">
+            <p className="mm-lede">
+              This build has no <code>VITE_SPOTIFY_CLIENT_ID</code>, so it cannot talk to Spotify.
+            </p>
+            <p className="mm-note">
+              For dev, copy <code>.env.example</code> to <code>.env.local</code> and paste the
+              Client ID from the Spotify dashboard, then restart the dev server. For the Pages
+              build, set a repository variable of the same name.
+            </p>
+          </div>
+        </AppShell>
+      );
+    }
+
+    switch (auth.status) {
+      case 'loading':
+        return (
+          <AppShell>
+            <h1>One moment</h1>
+            <div className="mm-card">
+              <p className="mm-lede">Talking to Spotify...</p>
+            </div>
+          </AppShell>
+        );
+
+      case 'not-on-guest-list':
+        return <NotOnGuestList onLogout={auth.logout} />;
+
+      case 'logged-in':
+        return <GoNoGo me={auth.me} onLogout={auth.logout} />;
+
+      case 'logged-out':
+        return <LoggedOut error={auth.error} onLogin={auth.login} />;
+    }
+  }
+}
+
+function LoggedOut({ error, onLogin }: { error?: string | undefined; onLogin: () => void }) {
+  // Worth saying out loud here rather than at the moment of redirect, since it
+  // is the single most likely local setup mistake.
+  const redirectProblem =
+    window.location.hostname === 'localhost'
+      ? 'You opened this on localhost. Spotify will not accept localhost as a redirect URI. Use http://127.0.0.1:5173/ instead.'
+      : null;
+
+  return (
+    <AppShell>
+      <h1>Milestone 1: go / no-go</h1>
+      <div className="mm-card">
+        <p className="mm-lede">
+          Log in with Spotify so we can check the login, the account, the player device and one
+          track playing.
+        </p>
+        {error ? <p className="mm-note">{error}</p> : null}
+        {redirectProblem ? <p className="mm-note">{redirectProblem}</p> : null}
+        <div className="mm-btn-row">
+          <button
+            type="button"
+            className="mm-btn mm-btn--primary mm-btn--big"
+            onClick={onLogin}
+            disabled={redirectProblem !== null}
+          >
+            Log in with Spotify
+          </button>
+        </div>
+        <p className="mm-hint">
+          You need to be on the app guest list and have full Spotify Premium. Add{' '}
+          <code>?debug=1</code> to the URL to keep the debug panel open in a production build.
+        </p>
+      </div>
+    </AppShell>
   );
 }
