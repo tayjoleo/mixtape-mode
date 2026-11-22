@@ -15,6 +15,7 @@ export type AuthState =
   | { status: 'loading' }
   | { status: 'logged-out'; error?: string }
   | { status: 'not-on-guest-list' }
+  | { status: 'not-premium' }
   | { status: 'logged-in'; me: Me };
 
 /**
@@ -67,7 +68,18 @@ export function useAuth(): AuthState & {
 
       try {
         const me = await getMe();
-        if (!cancelled) setState({ status: 'logged-in', me });
+        if (cancelled) return;
+
+        // Spec section 4. `product` is absent on some Development Mode apps,
+        // and a mobile-only plan can report `premium` while still being unable
+        // to stream, so the SDK's `account_error` stays as the backstop.
+        if (me.product !== undefined && me.product !== 'premium') {
+          logDebug('auth', 'Account is not full Premium', { product: me.product });
+          setState({ status: 'not-premium' });
+          return;
+        }
+
+        setState({ status: 'logged-in', me });
       } catch (error) {
         if (error instanceof NotOnGuestListError) {
           if (!cancelled) setState({ status: 'not-on-guest-list' });

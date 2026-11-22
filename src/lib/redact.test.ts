@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { redactPageUrl, REDACTED } from './redact';
+import { redactObject, redactPageUrl, REDACTED } from './redact';
 
 describe('redactPageUrl', () => {
   it('redacts code and state on an OAuth callback', () => {
@@ -55,5 +55,76 @@ describe('redactPageUrl', () => {
     const out = redactPageUrl('http://127.0.0.1:5173/?code=SUPER_SECRET&state=ALSO_SECRET#/make');
     expect(out).not.toContain('SUPER_SECRET');
     expect(out).not.toContain('ALSO_SECRET');
+  });
+});
+
+describe('redactObject', () => {
+  it('redacts the email and account id out of a GET /me body', () => {
+    const me = {
+      account_id: 'm5UY8KX0Ju',
+      country: 'CA',
+      display_name: 'jorgegarbajosa',
+      email: 'someone@example.com',
+      id: 'jorgegarbajosa',
+      product: 'premium',
+    };
+
+    expect(redactObject(me)).toEqual({
+      account_id: REDACTED,
+      country: 'CA',
+      display_name: 'jorgegarbajosa',
+      email: REDACTED,
+      id: 'jorgegarbajosa',
+      product: 'premium',
+    });
+  });
+
+  it('never leaves the email in the serialised log line', () => {
+    const line = JSON.stringify(redactObject({ email: 'taylor@example.com' }));
+    expect(line).not.toContain('taylor@example.com');
+    expect(line).toContain(REDACTED);
+  });
+
+  it('redacts tokens wherever they are nested', () => {
+    expect(
+      redactObject({ outer: { inner: { access_token: 'AQ1', refresh_token: 'AQ2' } } }),
+    ).toEqual({ outer: { inner: { access_token: REDACTED, refresh_token: REDACTED } } });
+  });
+
+  it('redacts inside arrays', () => {
+    expect(redactObject([{ email: 'a@b.c' }, { email: 'd@e.f' }])).toEqual([
+      { email: REDACTED },
+      { email: REDACTED },
+    ]);
+  });
+
+  it('keeps everything a log is actually for', () => {
+    const detail = { paused: false, position: 1024, device_id: 'abc123', expiresIn: 3600 };
+    expect(redactObject(detail)).toEqual(detail);
+  });
+
+  it('matches the key whatever its case', () => {
+    expect(redactObject({ Email: 'a@b.c', ACCESS_TOKEN: 'x' })).toEqual({
+      Email: REDACTED,
+      ACCESS_TOKEN: REDACTED,
+    });
+  });
+
+  it('passes primitives straight through', () => {
+    expect(redactObject('plain')).toBe('plain');
+    expect(redactObject(42)).toBe(42);
+    expect(redactObject(null)).toBeNull();
+    expect(redactObject(undefined)).toBeUndefined();
+  });
+
+  it('survives a cycle instead of hanging', () => {
+    const cyclic: Record<string, unknown> = { name: 'loop' };
+    cyclic.self = cyclic;
+    expect(redactObject(cyclic)).toEqual({ name: 'loop', self: '[circular]' });
+  });
+
+  it('does not mistake a repeated sibling for a cycle', () => {
+    const shared = { value: 1 };
+    expect(redactObject({ a: shared, b: shared })).toEqual({ a: { value: 1 }, b: { value: 1 } });
   });
 });

@@ -6,6 +6,7 @@ import { debugEnabled, logDebug } from './lib/debug';
 import { redactPageUrl } from './lib/redact';
 import GoNoGo from './screens/GoNoGo';
 import NotOnGuestList from './screens/NotOnGuestList';
+import NotPremium from './screens/NotPremium';
 import './styles/ui.css';
 
 /**
@@ -63,6 +64,9 @@ export default function App() {
 
       case 'not-on-guest-list':
         return <NotOnGuestList onLogout={auth.logout} />;
+
+      case 'not-premium':
+        return <NotPremium onLogout={auth.logout} />;
 
       case 'logged-in':
         return <GoNoGo me={auth.me} onLogout={auth.logout} />;

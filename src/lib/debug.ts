@@ -4,6 +4,8 @@
  * diagnose Milestone 1, so it records what happened rather than what we hoped
  * would happen.
  */
+import { redactObject } from './redact';
+
 export type DebugKind = 'app' | 'auth' | 'api' | 'sdk' | 'error';
 
 export type DebugEntry = {
@@ -28,7 +30,10 @@ function describe(detail: unknown): string | undefined {
   if (typeof detail === 'string') return detail;
   if (detail instanceof Error) return `${detail.name}: ${detail.message}`;
   try {
-    return JSON.stringify(detail);
+    // Redact centrally, so no individual call site can forget. GET /me returns
+    // the listener's email address, and this log exists to be pasted into a
+    // bug report.
+    return JSON.stringify(redactObject(detail));
   } catch {
     return String(detail);
   }
