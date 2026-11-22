@@ -3,6 +3,7 @@ import AppShell from './components/AppShell';
 import DebugPanel from './components/DebugPanel';
 import { useAuth } from './hooks/useAuth';
 import { debugEnabled, logDebug } from './lib/debug';
+import { redactPageUrl } from './lib/redact';
 import GoNoGo from './screens/GoNoGo';
 import NotOnGuestList from './screens/NotOnGuestList';
 import './styles/ui.css';
@@ -17,7 +18,7 @@ export default function App() {
 
   useEffect(() => {
     logDebug('app', 'App mounted', {
-      href: window.location.href,
+      href: redactPageUrl(window.location.href),
       base: import.meta.env.BASE_URL,
       mode: import.meta.env.MODE,
     });

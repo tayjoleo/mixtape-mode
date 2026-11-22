@@ -56,6 +56,10 @@ export function useAuth(): AuthState & {
         }
       }
 
+      // StrictMode's first run is already torn down by now. Bailing here keeps
+      // the second run from firing a duplicate GET /me and doubling the log.
+      if (cancelled) return;
+
       if (!isLoggedIn()) {
         if (!cancelled) setState({ status: 'logged-out' });
         return;

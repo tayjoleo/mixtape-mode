@@ -4,7 +4,9 @@
  * https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow
  */
 import { logDebug } from './debug';
+import { once } from './once';
 import { codeChallenge, createState, createVerifier } from './pkce';
+import { redactPageUrl, REDACTED } from './redact';
 import {
   clearTokens,
   expiryFromNow,
@@ -136,36 +138,52 @@ async function requestTokens(body: URLSearchParams): Promise<TokenResponse> {
 }
 
 /**
- * Drops the OAuth query string and puts `mm.returnTo` back as the hash. The
- * debug flag is deliberately kept, because losing the panel at the end of the
- * login is losing it exactly when it is useful.
+ * Drops the OAuth query string and puts the saved hash back.
+ *
+ * `returnTo` is passed in rather than read here: it was captured at the top of
+ * the login, before anything could clear it. The debug flag is deliberately
+ * kept, because losing the panel at the end of the login is losing it exactly
+ * when it is useful.
  */
-function restoreUrl(): void {
-  const returnTo = sessionStorage.getItem(RETURN_TO_KEY) ?? '';
-  sessionStorage.removeItem(RETURN_TO_KEY);
-
-  const keepDebug = new URLSearchParams(window.location.search).get('debug') === '1';
+function restoreUrl(returnTo: string, keepDebug: boolean): void {
   const query = keepDebug ? '?debug=1' : '';
   const url = window.location.pathname + query + returnTo;
 
   window.history.replaceState(null, '', url);
-  logDebug('auth', 'Restored the URL after login', { url });
+  logDebug('auth', 'Restored the URL after login', { url: redactPageUrl(url) });
 }
 
 /**
  * Exchanges the `?code=` for tokens, then puts the URL back the way it was:
- * query string gone, `mm.returnTo` restored as the hash.
+ * query string gone, the hash we saved before the redirect restored.
+ *
+ * Wrapped in `once`, and this matters. React StrictMode mounts effects twice
+ * in development. Without the wrapper the first run consumed the state, the
+ * verifier and the saved hash, and the second run found them gone, failed the
+ * state check, and restored the URL to the bare base path - throwing away the
+ * tape the listener had opened. Everything below reads the query string and
+ * sessionStorage exactly once.
  */
-export async function completeLogin(): Promise<void> {
+export const completeLogin = once(async (): Promise<void> => {
   const params = new URLSearchParams(window.location.search);
   const error = params.get('error');
   const code = params.get('code');
   const state = params.get('state');
+  const keepDebug = params.get('debug') === '1';
 
+  // Read and clear every single-use value up front, in one go.
   const expectedState = sessionStorage.getItem(STATE_KEY);
   const verifier = sessionStorage.getItem(VERIFIER_KEY);
+  const returnTo = sessionStorage.getItem(RETURN_TO_KEY) ?? '';
   sessionStorage.removeItem(STATE_KEY);
   sessionStorage.removeItem(VERIFIER_KEY);
+  sessionStorage.removeItem(RETURN_TO_KEY);
+
+  logDebug('auth', 'Handling the OAuth callback', {
+    hasCode: code !== null,
+    hasState: state !== null,
+    returnTo,
+  });
 
   try {
     if (error) {
@@ -182,7 +200,14 @@ export async function completeLogin(): Promise<void> {
     if (!expectedState || state !== expectedState) {
       throw new AuthError(
         'The login came back with the wrong state value, so we stopped it. Try logging in again.',
-        { state, expectedState },
+        {
+          // The values themselves never reach the log.
+          state: REDACTED,
+          expectedState: REDACTED,
+          statePresent: state !== null,
+          expectedStatePresent: expectedState !== null,
+          matched: state === expectedState,
+        },
       );
     }
     if (!verifier) {
@@ -206,9 +231,9 @@ export async function completeLogin(): Promise<void> {
     });
     logDebug('auth', 'Logged in', { expiresIn: payload.expires_in });
   } finally {
-    restoreUrl();
+    restoreUrl(returnTo, keepDebug);
   }
-}
+});
 
 let refreshInFlight: Promise<Tokens> | null = null;
 
