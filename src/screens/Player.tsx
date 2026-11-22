@@ -1,5 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
-import Cassette from '../components/Cassette';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import Cassette, { CASSETTE_HEIGHT, CASSETTE_WIDTH } from '../components/Cassette';
+import {
+  CardIcon,
+  DeckKey,
+  FfwdIcon,
+  FlipIcon,
+  PauseIcon,
+  PlayIcon,
+  RewIcon,
+  StopIcon,
+} from '../components/DeckKeys';
 import JCard from '../components/JCard';
 import { usePlayer } from '../hooks/usePlayer';
 import { logDebug } from '../lib/debug';
@@ -42,10 +52,69 @@ function useReducedMotion(): boolean {
   return reduced;
 }
 
+/**
+ * True on a phone held sideways.
+ *
+ * `pointer: coarse` keeps a short desktop window out of it: the deck layout is
+ * for a tape held in two hands, not for a browser someone has squashed.
+ */
+function useLandscapePhone(): boolean {
+  const query = '(orientation: landscape) and (max-height: 560px) and (pointer: coarse)';
+  const [isDeck, setIsDeck] = useState(() => window.matchMedia?.(query).matches ?? false);
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    const onChange = () => setIsDeck(media.matches);
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  }, []);
+
+  return isDeck;
+}
+
+/**
+ * Scales the cassette to fill the space it is given.
+ *
+ * The drawing is a fixed 360x228, so making it the whole screen means
+ * measuring the room left over and scaling to that. A ResizeObserver rather
+ * than viewport maths, because what is left depends on the deck furniture
+ * above and below it rather than on the window.
+ */
+function useFitScale(
+  ref: React.RefObject<HTMLElement | null>,
+  naturalWidth: number,
+  naturalHeight: number,
+): number {
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new ResizeObserver((entries) => {
+      const box = entries[0]?.contentRect;
+      if (!box || box.width === 0 || box.height === 0) return;
+
+      const fit = Math.min(box.width / naturalWidth, box.height / naturalHeight);
+      // Floored so rounding cannot clip the hard shadow off the edge.
+      setScale(Math.max(0.35, Math.min(2.6, Math.floor(fit * 100) / 100)));
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref, naturalWidth, naturalHeight]);
+
+  return scale;
+}
+
 export default function Player({ tape, me, onLogin, onLogout }: Props) {
   const loggedIn = me !== null;
   const player = usePlayer(loggedIn);
   const reducedMotion = useReducedMotion();
+  const deckMode = useLandscapePhone();
+
+  const stageRef = useRef<HTMLDivElement>(null);
+  const fitScale = useFitScale(stageRef, CASSETTE_WIDTH, CASSETTE_HEIGHT);
 
   const [side, setSide] = useState<SideId>(() => openingSide(tape.sides));
   const [cardOpen, setCardOpen] = useState(false);
@@ -163,6 +232,12 @@ export default function Player({ tape, me, onLogin, onLogout }: Props) {
     await player.seek(0);
   }, [index, player, sideIds.length]);
 
+  const onStop = useCallback(async () => {
+    logDebug('app', 'Stop');
+    await player.pause();
+    await player.seek(0);
+  }, [player]);
+
   const flip = useCallback(
     async (andPlay: boolean) => {
       const next = OTHER_SIDE[side];
@@ -190,6 +265,161 @@ export default function Player({ tape, me, onLogin, onLogout }: Props) {
   const deckWarming = loggedIn && player.status !== 'ready' && player.status !== 'ready-timeout';
   const deckFailed = player.status === 'ready-timeout' || player.status === 'error';
   const canPlay = player.status === 'ready' && sideIds.length > 0;
+
+  /* --- a phone held sideways: the tape is the screen ---------------------- */
+
+  if (deckMode) {
+    return (
+      <div className="mm-deck">
+        <div className="mm-deck__readout">
+          <span className="mm-deck__counter">
+            Side {sideLabel(side)} · Track {Math.min(index + 1, sideIds.length)} of {sideIds.length}
+          </span>
+          <span className="mm-deck__time">
+            {formatTime(position)} / {formatTime(duration)}
+          </span>
+        </div>
+
+        {/* The tape fills everything between the readout and the keys. */}
+        <div className="mm-deck__window" ref={stageRef}>
+          <Cassette
+            shell={tape.shell}
+            reels={tape.reels}
+            sticker={tape.sticker}
+            font={tape.font}
+            ink={tape.ink}
+            labelText={tape.title}
+            side={sideLabel(side)}
+            spinning={playing && !reducedMotion}
+            doodles={tape.doodles}
+            scale={fitScale}
+          />
+        </div>
+
+        <div
+          className="mm-deck__tape-track"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(progressPercent(position, duration))}
+          aria-label="How far through the song"
+        >
+          <div
+            className="mm-deck__tape-fill"
+            style={{ width: progressPercent(position, duration) + '%' }}
+          />
+        </div>
+
+        {loggedIn ? (
+          <div className="mm-deck__keys" role="group" aria-label="Tape controls">
+            <DeckKey
+              label="Rew"
+              title="Rewind to the previous song"
+              onPress={() => void onRewind()}
+              disabled={!canPlay || !hasStarted}
+            >
+              <RewIcon />
+            </DeckKey>
+
+            <DeckKey
+              label={playing ? 'Pause' : 'Play'}
+              title={playing ? 'Pause' : 'Play'}
+              onPress={() => void onPlayPause()}
+              disabled={!canPlay}
+              tone="play"
+              latched={playing}
+            >
+              {playing ? <PauseIcon /> : <PlayIcon />}
+            </DeckKey>
+
+            <DeckKey
+              label="F.Fwd"
+              title="Fast forward to the next song"
+              onPress={() => void onForward()}
+              disabled={!canPlay || !hasStarted}
+            >
+              <FfwdIcon />
+            </DeckKey>
+
+            <DeckKey
+              label="Stop"
+              title="Stop"
+              onPress={() => void onStop()}
+              disabled={!canPlay || !hasStarted}
+            >
+              <StopIcon />
+            </DeckKey>
+
+            <DeckKey
+              label="Flip"
+              title={hasSideB ? 'Flip to Side ' + otherLabel : 'This tape has no Side B'}
+              onPress={() => void flip(playing)}
+              disabled={!hasSideB}
+            >
+              <FlipIcon />
+            </DeckKey>
+
+            <DeckKey
+              label="J-card"
+              title="Open the J-card"
+              onPress={() => setCardOpen(true)}
+              tone="card"
+            >
+              <CardIcon />
+            </DeckKey>
+          </div>
+        ) : (
+          <div className="mm-deck__keys mm-deck__keys--out">
+            <button type="button" className="mm-btn mm-btn--primary" onClick={onLogin}>
+              Log in with Spotify to play
+            </button>
+            <button type="button" className="mm-btn mm-btn--sun" onClick={() => setCardOpen(true)}>
+              J-card
+            </button>
+          </div>
+        )}
+
+        {atEndOfSide || player.message || deckFailed ? (
+          <div className="mm-deck__tray" role="status">
+            {atEndOfSide ? (
+              <>
+                <strong>End of Side {sideLabel(side)}.</strong>{' '}
+                {hasSideB ? (
+                  <button type="button" className="mm-deck__inline" onClick={() => void flip(true)}>
+                    Flip the tape
+                  </button>
+                ) : (
+                  <button type="button" className="mm-deck__inline" onClick={() => void start(0)}>
+                    Play it again
+                  </button>
+                )}
+              </>
+            ) : null}
+            {player.message ? <span>{player.message}</span> : null}
+            {deckFailed && loggedIn ? (
+              <button type="button" className="mm-deck__inline" onClick={() => void onSpotifyApp()}>
+                Play in my Spotify app
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+
+        <JCard
+          tape={tape}
+          open={cardOpen}
+          onClose={() => setCardOpen(false)}
+          unsealed={unsealed}
+          onPeek={() => {
+            logDebug('app', 'Peeked at the J-card');
+            setPeeked(true);
+          }}
+          side={side}
+          index={index}
+          canLoadTracks={loggedIn}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="mm-player">

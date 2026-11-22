@@ -1,0 +1,83 @@
+/*
+ * Transport keys, styled like the mechanical ones on a cassette deck: a tall
+ * key sitting in a slot, with a hard shadow beneath it that collapses as it
+ * is pressed so the key visibly sinks.
+ */
+
+.mm-key {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 4px;
+  border: var(--mm-border) solid var(--mm-ink);
+  border-radius: 7px;
+  background: linear-gradient(180deg, #ffffff 0%, #dcdce2 58%, #b9b9c2 100%);
+  box-shadow: 0 4px 0 var(--mm-ink);
+  cursor: pointer;
+  transform: translateY(0);
+  transition:
+    transform 70ms ease-out,
+    box-shadow 70ms ease-out;
+}
+
+.mm-key:active:not(:disabled),
+.mm-key--latched:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 var(--mm-ink);
+}
+
+.mm-key:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: 0 2px 0 var(--mm-ink);
+}
+
+.mm-key--play {
+  background: linear-gradient(180deg, #ff86b4 0%, var(--mm-pink) 58%, #d6246e 100%);
+}
+
+.mm-key--card {
+  background: linear-gradient(180deg, #ffe694 0%, var(--mm-sunshine) 58%, #e0ac17 100%);
+}
+
+.mm-key__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+}
+
+.mm-key__icon svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--mm-ink);
+  stroke: none;
+}
+
+.mm-key__stroke {
+  fill: none !important;
+  stroke: var(--mm-ink) !important;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mm-key__label {
+  font-family: var(--mm-font-display);
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  color: var(--mm-ink);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-key {
+    transition: none;
+  }
+}

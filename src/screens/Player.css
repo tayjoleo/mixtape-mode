@@ -332,3 +332,113 @@
     gap: 8px;
   }
 }
+
+/* ==========================================================================
+ * A phone held sideways: the tape is the screen.
+ *
+ * Not a responsive variant of the layout above but a different one, rendered
+ * only when the viewport is landscape, short and touch-driven. The cassette
+ * is scaled to fill everything between the readout and the keys, and the
+ * controls become the mechanical transport keys of a deck.
+ * ======================================================================== */
+
+.mm-deck {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 10px calc(6px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  background-color: var(--mm-paper);
+  background-image: var(--mm-paper-bg);
+  background-size: var(--mm-paper-bg-size);
+  overflow: hidden;
+}
+
+.mm-deck__readout {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 2px;
+}
+
+.mm-deck__counter {
+  font-family: var(--mm-font-display);
+  font-size: 13px;
+}
+
+.mm-deck__time {
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The measured box. Everything spare goes here. */
+.mm-deck__window {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mm-deck__tape-track {
+  flex: none;
+  height: 8px;
+  border: 2px solid var(--mm-ink);
+  border-radius: var(--mm-radius-pill);
+  background: var(--mm-white);
+  overflow: hidden;
+}
+
+.mm-deck__tape-fill {
+  height: 100%;
+  background: var(--mm-pink);
+  transition: width 220ms linear;
+}
+
+.mm-deck__keys {
+  flex: none;
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.mm-deck__keys--out {
+  justify-content: center;
+  gap: 10px;
+}
+
+.mm-deck__tray {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  background: var(--mm-lime);
+  border: 2px solid var(--mm-ink);
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.mm-deck__inline {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 2px solid var(--mm-ink);
+  border-radius: var(--mm-radius-pill);
+  background: var(--mm-card);
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-deck__tape-fill {
+    transition: none;
+  }
+}
